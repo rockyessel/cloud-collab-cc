@@ -4,7 +4,7 @@ import NextLink from "../reusables/next-link";
 const HeroSection = () => {
   return (
     <div className="w-full px-6">
-      <div className="mt-8 relative rounded-lg bg-yellow-700 container mx-auto flex flex-col items-center pt-12 sm:pt-24 pb-24 sm:pb-32 md:pb-48 lg:pb-56 xl:pb-64">
+      <div className="mt-8 relative rounded-lg bg-blue-700 container mx-auto flex flex-col items-center pt-12 sm:pt-24 pb-24 sm:pb-32 md:pb-48 lg:pb-56 xl:pb-64">
         <ExternalImg
           className="mr-2 lg:mr-12 mt-2 lg:mt-12 absolute right-0 top-0"
           src="https://tuk-cdn.s3.amazonaws.com/can-uploader/center_aligned_with_image-svg2.svg"
@@ -19,15 +19,23 @@ const HeroSection = () => {
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl text-center text-white font-bold leading-tight">
             Empower Your Organization with Collaborative File Cloud
           </h1>
+          <p className="my-4 text-lg font-normal text-white text-center lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">
+            Unlock seamless file management and collaboration within your
+            organization with our cutting-edge cloud solution. Create, organize,
+            and securely share files, while easily inviting and managing users
+            in your collaborative workspace. Elevate productivity, streamline
+            teamwork, and keep your data protected in a digital environment
+            designed for the modern organization.
+          </p>
         </div>
-        <div className="flex justify-center items-center mb-10 sm:mb-20">
+        <div className="flex justify-center items-center mb-4 sm:mb-20">
           <NextLink
             href="/dashboard"
-            className="hover:text-white hover:bg-transparent lg:text-xl hover:border-white border bg-white transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 ring-offset-yellow-700	focus:ring-white rounded text-yellow-700 px-4 sm:px-8 py-1 sm:py-3 text-sm"
+            className="hover:text-white hover:bg-transparent lg:text-xl hover:border-white border bg-blue-500 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 ring-offset-blue-700	focus:ring-white rounded text-blue-700 px-4 sm:px-8 py-1 sm:py-3 text-sm"
           >
             Get Started
           </NextLink>
-          <button className="hover:bg-white hover:text-yellow-600 lg:text-xl hover:border-yellow-600 ml-3 sm:ml-6 bg-transparent transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 ring-offset-yellow-700 focus:ring-white hover:bg-yellow-700-800 rounded border border-white text-white px-4 sm:px-8 py-1 sm:py-3 text-sm">
+          <button className="hover:bg-white hover:text-blue-600 lg:text-xl hover:border-blue-600 ml-3 sm:ml-6 bg-transparent transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 ring-offset-blue-700 focus:ring-white hover:bg-blue-700-800 rounded border border-white text-white px-4 sm:px-8 py-1 sm:py-3 text-sm">
             Learn More
           </button>
         </div>
