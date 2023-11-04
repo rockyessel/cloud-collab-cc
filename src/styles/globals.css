@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*,
+html,
+body,
+:root {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center rounded-lg justify-center  text-white transition-all duration-200 bg-gray-900 border border-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 hover:bg-gray-600 dark:text-gray-400;
+  }
+  .btn-outline-small {
+    @apply inline-flex items-center rounded-lg justify-center transition-all duration-200 bg-transparent border border-gray-300 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 dark:text-gray-400;
+  }
+}

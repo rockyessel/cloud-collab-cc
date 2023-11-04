@@ -1,113 +1,281 @@
-import Image from 'next/image'
+import Container from "@/components/reusables/container";
+import HeroSection from "@/components/sections/hero";
 
-export default function Home() {
+const Home = () => {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <Container>
+      <HeroSection />
+      <section className="relative">
+        {/* Section background (needs .relative class on parent and next sibling elements) */}
+        <div
+          className="absolute inset-0 top-1/2 md:mt-24 lg:mt-0 bg-gray-900 pointer-events-none"
+          aria-hidden="true"
+        ></div>
+        <div className="absolute left-0 right-0 bottom-0 m-auto w-px p-px h-20 bg-gray-200 transform translate-y-1/2"></div>
+
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="py-12 md:py-20">
+            {/* Section header */}
+            <div className="max-w-3xl mx-auto text-center pb-12 md:pb-20">
+              <h2 className="h2 mb-4">Explore the solutions</h2>
+              <p className="text-xl text-gray-600">
+                Duis aute irure dolor in reprehenderit in voluptate velit esse
+                cillum dolore eu fugiat nulla pariatur excepteur sint occaecat
+                cupidatat.
+              </p>
+            </div>
+
+            {/* Items */}
+            <div className="max-w-sm mx-auto grid gap-6 md:grid-cols-2 lg:grid-cols-3 items-start md:max-w-2xl lg:max-w-none">
+              {/* 1st item */}
+              <div className="relative flex flex-col items-center p-6 bg-white rounded shadow-xl">
+                <svg
+                  className="w-16 h-16 p-1 -mt-1 mb-2"
+                  viewBox="0 0 64 64"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g fill="none" fillRule="evenodd">
+                    <rect
+                      className="fill-current text-blue-600"
+                      width="64"
+                      height="64"
+                      rx="32"
+                    />
+                    <g strokeWidth="2">
+                      <path
+                        className="stroke-current text-blue-300"
+                        d="M34.514 35.429l2.057 2.285h8M20.571 26.286h5.715l2.057 2.285"
+                      />
+                      <path
+                        className="stroke-current text-white"
+                        d="M20.571 37.714h5.715L36.57 26.286h8"
+                      />
+                      <path
+                        className="stroke-current text-blue-300"
+                        strokeLinecap="square"
+                        d="M41.143 34.286l3.428 3.428-3.428 3.429"
+                      />
+                      <path
+                        className="stroke-current text-white"
+                        strokeLinecap="square"
+                        d="M41.143 29.714l3.428-3.428-3.428-3.429"
+                      />
+                    </g>
+                  </g>
+                </svg>
+                <h4 className="text-xl font-bold leading-snug tracking-tight mb-1">
+                  Headless CMS
+                </h4>
+                <p className="text-gray-600 text-center">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                </p>
+              </div>
+
+              {/* 2nd item */}
+              <div className="relative flex flex-col items-center p-6 bg-white rounded shadow-xl">
+                <svg
+                  className="w-16 h-16 p-1 -mt-1 mb-2"
+                  viewBox="0 0 64 64"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g fill="none" fillRule="evenodd">
+                    <rect
+                      className="fill-current text-blue-600"
+                      width="64"
+                      height="64"
+                      rx="32"
+                    />
+                    <g strokeWidth="2" transform="translate(19.429 20.571)">
+                      <circle
+                        className="stroke-current text-white"
+                        strokeLinecap="square"
+                        cx="12.571"
+                        cy="12.571"
+                        r="1.143"
+                      />
+                      <path
+                        className="stroke-current text-white"
+                        d="M19.153 23.267c3.59-2.213 5.99-6.169 5.99-10.696C25.143 5.63 19.514 0 12.57 0 5.63 0 0 5.629 0 12.571c0 4.527 2.4 8.483 5.99 10.696"
+                      />
+                      <path
+                        className="stroke-current text-blue-300"
+                        d="M16.161 18.406a6.848 6.848 0 003.268-5.835 6.857 6.857 0 00-6.858-6.857 6.857 6.857 0 00-6.857 6.857 6.848 6.848 0 003.268 5.835"
+                      />
+                    </g>
+                  </g>
+                </svg>
+                <h4 className="text-xl font-bold leading-snug tracking-tight mb-1">
+                  Headless CMS
+                </h4>
+                <p className="text-gray-600 text-center">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                </p>
+              </div>
+
+              {/* 3rd item */}
+              <div className="relative flex flex-col items-center p-6 bg-white rounded shadow-xl">
+                <svg
+                  className="w-16 h-16 p-1 -mt-1 mb-2"
+                  viewBox="0 0 64 64"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g fill="none" fillRule="evenodd">
+                    <rect
+                      className="fill-current text-blue-600"
+                      width="64"
+                      height="64"
+                      rx="32"
+                    />
+                    <g strokeWidth="2">
+                      <path
+                        className="stroke-current text-blue-300"
+                        d="M34.743 29.714L36.57 32 27.43 43.429H24M24 20.571h3.429l1.828 2.286"
+                      />
+                      <path
+                        className="stroke-current text-white"
+                        strokeLinecap="square"
+                        d="M34.743 41.143l1.828 2.286H40M40 20.571h-3.429L27.43 32l1.828 2.286"
+                      />
+                      <path
+                        className="stroke-current text-blue-300"
+                        d="M36.571 32H40"
+                      />
+                      <path
+                        className="stroke-current text-white"
+                        d="M24 32h3.429"
+                        strokeLinecap="square"
+                      />
+                    </g>
+                  </g>
+                </svg>
+                <h4 className="text-xl font-bold leading-snug tracking-tight mb-1">
+                  Headless CMS
+                </h4>
+                <p className="text-gray-600 text-center">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                </p>
+              </div>
+
+              {/* 4th item */}
+              <div className="relative flex flex-col items-center p-6 bg-white rounded shadow-xl">
+                <svg
+                  className="w-16 h-16 p-1 -mt-1 mb-2"
+                  viewBox="0 0 64 64"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g fill="none" fillRule="evenodd">
+                    <rect
+                      className="fill-current text-blue-600"
+                      width="64"
+                      height="64"
+                      rx="32"
+                    />
+                    <g strokeWidth="2">
+                      <path
+                        className="stroke-current text-white"
+                        d="M32 37.714A5.714 5.714 0 0037.714 32a5.714 5.714 0 005.715 5.714"
+                      />
+                      <path
+                        className="stroke-current text-white"
+                        d="M32 37.714a5.714 5.714 0 015.714 5.715 5.714 5.714 0 015.715-5.715M20.571 26.286a5.714 5.714 0 005.715-5.715A5.714 5.714 0 0032 26.286"
+                      />
+                      <path
+                        className="stroke-current text-white"
+                        d="M20.571 26.286A5.714 5.714 0 0126.286 32 5.714 5.714 0 0132 26.286"
+                      />
+                      <path
+                        className="stroke-current text-blue-300"
+                        d="M21.714 40h4.572M24 37.714v4.572M37.714 24h4.572M40 21.714v4.572"
+                        strokeLinecap="square"
+                      />
+                    </g>
+                  </g>
+                </svg>
+                <h4 className="text-xl font-bold leading-snug tracking-tight mb-1">
+                  Headless CMS
+                </h4>
+                <p className="text-gray-600 text-center">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                </p>
+              </div>
+
+              {/* 5th item */}
+              <div className="relative flex flex-col items-center p-6 bg-white rounded shadow-xl">
+                <svg
+                  className="w-16 h-16 p-1 -mt-1 mb-2"
+                  viewBox="0 0 64 64"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g fill="none" fillRule="evenodd">
+                    <rect
+                      className="fill-current text-blue-600"
+                      width="64"
+                      height="64"
+                      rx="32"
+                    />
+                    <g strokeWidth="2">
+                      <path
+                        className="stroke-current text-white"
+                        d="M19.429 32a12.571 12.571 0 0021.46 8.89L23.111 23.11A12.528 12.528 0 0019.429 32z"
+                      />
+                      <path
+                        className="stroke-current text-blue-300"
+                        d="M32 19.429c6.943 0 12.571 5.628 12.571 12.571M32 24a8 8 0 018 8"
+                      />
+                      <path
+                        className="stroke-current text-white"
+                        d="M34.286 29.714L32 32"
+                      />
+                    </g>
+                  </g>
+                </svg>
+                <h4 className="text-xl font-bold leading-snug tracking-tight mb-1">
+                  Headless CMS
+                </h4>
+                <p className="text-gray-600 text-center">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                </p>
+              </div>
+
+              {/* 6th item */}
+              <div className="relative flex flex-col items-center p-6 bg-white rounded shadow-xl">
+                <svg
+                  className="w-16 h-16 p-1 -mt-1 mb-2"
+                  viewBox="0 0 64 64"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g fill="none" fillRule="evenodd">
+                    <rect
+                      className="fill-current text-blue-600"
+                      width="64"
+                      height="64"
+                      rx="32"
+                    />
+                    <g strokeWidth="2" strokeLinecap="square">
+                      <path
+                        className="stroke-current text-white"
+                        d="M29.714 40.358l-4.777 2.51 1.349-7.865-5.715-5.57 7.898-1.147L32 21.13l3.531 7.155 7.898 1.147L40 32.775"
+                      />
+                      <path
+                        className="stroke-current text-blue-300"
+                        d="M44.571 43.429H34.286M44.571 37.714H34.286"
+                      />
+                    </g>
+                  </g>
+                </svg>
+                <h4 className="text-xl font-bold leading-snug tracking-tight mb-1">
+                  Headless CMS
+                </h4>
+                <p className="text-gray-600 text-center">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
+    </Container>
+  );
+};
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
-}
+export default Home;
