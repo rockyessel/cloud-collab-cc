@@ -3,9 +3,10 @@ import mongoose from "mongoose";
 const OrganisationSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, unique: true },
+    logo: { type: String },
     description: { type: String, required: true },
     owner: { type: String, unique: true, required: true },
-    members: [{ type: String, unique: true, required: true }],
+    members: [{ type: String, unique: true }],
     files: [{ type: mongoose.Schema.Types.ObjectId, ref: "File" }],
   },
   { timestamps: true }

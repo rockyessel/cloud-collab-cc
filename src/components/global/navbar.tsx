@@ -1,65 +1,41 @@
 "use client";
 
-import { useState } from "react";
-import { ThemeButton } from "../actions/theme-btn";
-import Container from "../reusables/container";
-import AuthBtn from "../actions/auth-btn";
+import { useAuth } from "@pangeacyber/react-auth";
+import LogoSVG from "../reusables/logo";
 import NextImage from "../reusables/next-image";
-import Button from "../reusables/button";
+import NextLink from "../reusables/next-link";
+import cookieCutter from "cookie-cutter";
 
 const Navbar = () => {
-  const [show, setShow] = useState(false);
+  const { login, user, authenticated, getToken, loading } = useAuth();
+  cookieCutter.set("token", getToken());
 
+  console.log("token: ", getToken());
+
+  console.log(user);
   return (
-    <nav className="">
-      <Container className="flex items-center justify-between">
-        <div className="flex items-center" aria-label="Home" role="img">
-          <NextImage
-            width={100}
-            height={100}
-            className="cursor-pointer w-16 h-16"
-            src="/logo.svg"
-            alt="logo"
-          />
-          <p className="ml-2 lg:ml-4 text-base lg:text-2xl font-bold text-gray-800">
-            MaaCloud
-          </p>
-        </div>
-        <div>
-          <Button
-            onClick={() => setShow(!show)}
-            className="sm:block md:hidden lg:hidden text-gray-500 hover:text-gray-700 focus:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+    <header className="bg-slate-900 self-center flex w-full items-start justify-between gap-5 px-5 max-md:max-w-full max-md:flex-wrap">
+      <LogoSVG fill={"#f43f5e"} width={100} height={100} />
+      <nav className="self-stretch flex items-start justify-between gap-4 max-md:justify-center">
+        {loading ? (
+          <p>Loading</p>
+        ) : authenticated ? (
+          <NextLink
+            href="/dashboard"
+            className="bttn b-dark text-[#2c7c98]  p-4 rounded-lg"
           >
-            menu
-          </Button>
-          <div
-            id="menu"
-            className={`md:block lg:block ${show ? "" : "hidden"}`}
+            Dashboard
+          </NextLink>
+        ) : (
+          <button
+            onClick={login}
+            className="bttn bttn-rose p-4 text-rose-600 rounded-lg"
           >
-            <Button
-              onClick={() => setShow(!show)}
-              className="block md:hidden lg:hidden text-gray-500 hover:text-gray-700 focus:text-gray-700 fixed focus:outline-none focus:ring-2 focus:ring-gray-500 bg-white md:bg-transparent z-30 top-0 mt-3"
-            >
-              <NextImage
-                width={100}
-                height={100}
-                className="h-8 w-8"
-                src="/logo.svg"
-                alt="hide"
-              />
-            </Button>
-            <ul className="flex text-3xl md:text-base items-center py-8 md:flex flex-col md:flex-row justify-center fixed md:relative top-0 bottom-0 left-0 right-0 bg-white md:bg-transparent  z-20">
-              <li className="text-gray-600 text-lg hover:text-gray-800 cursor-pointer md:ml-10 pt-10 md:pt-0">
-                <AuthBtn />
-              </li>
-              <li className="text-gray-600 text-lg hover:text-gray-800 cursor-pointer md:ml-10 pt-10 md:pt-0">
-                <ThemeButton />
-              </li>
-            </ul>
-          </div>
-        </div>
-      </Container>
-    </nav>
+            Authenticate
+          </button>
+        )}
+      </nav>
+    </header>
   );
 };
 

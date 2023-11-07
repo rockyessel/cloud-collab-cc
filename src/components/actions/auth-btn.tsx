@@ -1,6 +1,7 @@
 import { useAuth } from "@pangeacyber/react-auth";
 import Button from "../reusables/button";
 import React from "react";
+import NextLink from "../reusables/next-link";
 
 const AuthBtn = () => {
   const { authenticated, login, logout } = useAuth();
@@ -11,7 +12,7 @@ const AuthBtn = () => {
   return (
     <div>
       {authenticated ? (
-        <Button onClick={handleLogout}>Logout</Button>
+        <NextLink href="/dashboard">Dashboard</NextLink>
       ) : (
         <Button onClick={login}>Login</Button>
       )}

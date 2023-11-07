@@ -6,13 +6,7 @@ interface SectionProps extends HTMLAttributes<HTMLElement> {
 }
 const Container = (props: SectionProps) => {
   return (
-    <div
-      {...props}
-      className={cn(
-        props.className,
-        "mt-2 container mx-auto flex flex-col items-center"
-      )}
-    >
+    <div {...props} className={cn(props.className, "mt-2 container mx-auto")}>
       {props.children}
     </div>
   );

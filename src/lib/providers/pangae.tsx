@@ -2,21 +2,23 @@
 
 import { AuthProvider } from "@pangeacyber/react-auth";
 import { ReactNode } from "react";
+import { PANGEA_OBJ } from "../config/pangea";
 
 interface Props {
   children: ReactNode;
 }
 const PangaeAuthProvider = ({ children }: Props) => {
+  const { token, hostedURL, redirectURI, ...rest } = PANGEA_OBJ;
+
+  const authConfig = {
+    ...rest,
+    clientToken: token,
+  };
   return (
     <AuthProvider
-      loginUrl={
-        "https://pdn-da2h2alyjhqi2karyxvyg6xw426j6pbr.login.aws.us.pangea.cloud/"
-      }
-      redirectUri={process.env.NEXT_PUBLIC_LOGIN_URL}
-      config={{
-        clientToken: process.env.NEXT_PUBLIC_CLIENT_TOKEN,
-        domain: process.env.NEXT_PUBLIC_PROVIDER_API,
-      }}
+      loginUrl={hostedURL}
+      redirectUri={redirectURI}
+      config={authConfig}
     >
       {children as any}
     </AuthProvider>

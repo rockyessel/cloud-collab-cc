@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- License: CC Attribution. Made by Shannon E. Thomas: https://dribbble.com/shannonethomas -->
+<svg version="1.1" id="Uploaded to svgrepo.com" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+	 width="800px" height="800px" viewBox="0 0 32 32" xml:space="preserve">
+<style type="text/css">
+	.puchipuchi_een{fill:#f43f5e;}
+</style>
+<path class="puchipuchi_een" d="M31,13c0,1.104-0.896,2-2,2h-8c1.104,0,2,0.896,2,2s-0.896,2-2,2h-1c1.104,0,2,0.896,2,2
+	s-0.896,2-2,2h-1c1.104,0,2,0.896,2,2s-0.896,2-2,2H9c-0.55,0-1.318-0.318-1.707-0.707L4,24V12l5.751-3.562
+	C10.105,8.155,10.546,8,11,8h5c1.104,0,2,0.896,2,2c0,0.366-0.106,0.705-0.277,1H29C30.104,11,31,11.896,31,13z M1,13v10
+	c0,0.552,0.447,1,1,1h1V12H2C1.447,12,1,12.448,1,13z"/>
+</svg>

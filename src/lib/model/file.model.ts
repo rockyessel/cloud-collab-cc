@@ -2,10 +2,10 @@ import mongoose from "mongoose";
 
 const FileSchema = new mongoose.Schema(
   {
-    organizationId: {type: mongoose.Schema.Types.ObjectId, ref: "Organisation", require: true },
-    folderId: {type: mongoose.Schema.Types.ObjectId, ref: "Folder", require: true },
-    url: { type: String, require: true },
+    organizationId: {type: mongoose.Schema.Types.ObjectId, ref: "Organisation" },
+    folderId: {type: mongoose.Schema.Types.ObjectId, ref: "Folder"},
     proxyURL: { type: String, require: true },
+    localId:{ type: String, default:"" },
     hash: { type: String, default:"" },
     score: { type: String, default:"" },
     size: { type: String, required: true },

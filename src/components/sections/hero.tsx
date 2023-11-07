@@ -1,51 +1,47 @@
 import ExternalImg from "../reusables/external-img";
+import NextImage from "../reusables/next-image";
 import NextLink from "../reusables/next-link";
 
 const HeroSection = () => {
   return (
-    <div className="w-full px-6">
-      <div className="mt-8 relative rounded-lg bg-blue-700 container mx-auto flex flex-col items-center pt-12 sm:pt-24 pb-24 sm:pb-32 md:pb-48 lg:pb-56 xl:pb-64">
-        <ExternalImg
-          className="mr-2 lg:mr-12 mt-2 lg:mt-12 absolute right-0 top-0"
-          src="https://tuk-cdn.s3.amazonaws.com/can-uploader/center_aligned_with_image-svg2.svg"
-          alt="bg"
-        />
-        <ExternalImg
-          className="ml-2 lg:ml-12 mb-2 lg:mb-12 absolute bottom-0 left-0"
-          src="https://tuk-cdn.s3.amazonaws.com/can-uploader/center_aligned_with_image-svg3.svg"
-          alt="bg"
-        />
-        <div className="w-11/12 sm:w-2/3 mb-5 sm:mb-10">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl text-center text-white font-bold leading-tight">
-            Empower Your Organization with Collaborative File Cloud
-          </h1>
-          <p className="my-4 text-lg font-normal text-white text-center lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">
-            Unlock seamless file management and collaboration within your
-            organization with our cutting-edge cloud solution. Create, organize,
-            and securely share files, while easily inviting and managing users
-            in your collaborative workspace. Elevate productivity, streamline
-            teamwork, and keep your data protected in a digital environment
-            designed for the modern organization.
-          </p>
+    <div className="self-center w-full mt-20 pr-44 max-md:max-w-full max-md:mt-10 max-md:pr-5">
+      <div className="gap-5 flex max-md:flex-col max-md:items-stretch max-md:gap-0">
+        <div className="flex flex-col items-stretch w-[52%] max-md:w-full max-md:ml-0">
+          <div className="flex flex-col my-auto max-md:max-w-full max-md:mt-10">
+            <div className="justify-center text-rose-500 text-6xl font-bold leading-[69.6px] self-start max-md:max-w-full max-md:text-4xl max-md:leading-[54px]">
+              <span className="text-white">
+                Organizational File
+                <br />
+                Management Simplified.
+                <br />
+                Elevate Now.
+                <br />
+              </span>
+              <span className="text-rose-500">Powered by Pangea.</span>
+            </div>
+            <div className="justify-center text-white text-lg leading-8 mt-5 self-start max-md:max-w-full">
+              Simplify organization-wide file management and collaboration.
+              Create and manage your organization with ease, all while ensuring
+              data security through customizable permissions and encryption.
+            </div>
+            <div className="justify-center text-slate-900 text-center text-base leading-5 whitespace-nowrap items-center bg-rose-500 w-[267px] max-w-full mt-6 pl-4 pr-4 py-5 rounded-2xl self-start">
+              Get Started
+            </div>
+            <div className="justify-center text-white text-opacity-60 text-sm leading-6 whitespace-nowrap mt-3.5 self-start max-md:max-w-full">
+              *
+              {`Get Authenticated to Begin Your Organization and Team's
+                  Journey`}
+              .
+            </div>
+          </div>
         </div>
-        <div className="flex justify-center items-center mb-4 sm:mb-20">
-          <NextLink
-            href="/dashboard"
-            className="hover:text-white hover:bg-transparent lg:text-xl hover:border-white border bg-blue-500 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 ring-offset-blue-700	focus:ring-white rounded text-blue-700 px-4 sm:px-8 py-1 sm:py-3 text-sm"
-          >
-            Get Started
-          </NextLink>
-          <button className="hover:bg-white hover:text-blue-600 lg:text-xl hover:border-blue-600 ml-3 sm:ml-6 bg-transparent transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 ring-offset-blue-700 focus:ring-white hover:bg-blue-700-800 rounded border border-white text-white px-4 sm:px-8 py-1 sm:py-3 text-sm">
-            Learn More
-          </button>
-        </div>
-      </div>
-      <div className="container mx-auto flex justify-center md:-mt-56 -mt-20 sm:-mt-40">
-        <div className="relative sm:w-2/3 w-11/12">
-          <ExternalImg
-            src="https://tuk-cdn.s3.amazonaws.com/assets/components/hero/h_2.png"
-            alt="Sample Page"
-            role="img"
+        <div className="flex flex-col items-stretch w-[48%] ml-5 max-md:w-full max-md:ml-0">
+          <NextImage
+            width={500}
+            height={500}
+            alt=""
+            src="https://cdn.builder.io/api/v1/image/assets/TEMP/919a1a99-37d0-42f0-8915-16174dda671b?apiKey=331e0e30f65c4a9dafd410e2c2e475a4&"
+            className="aspect-[1.22] object-contain object-center w-full justify-center items-center overflow-hidden grow max-md:max-w-full max-md:mt-10"
           />
         </div>
       </div>
