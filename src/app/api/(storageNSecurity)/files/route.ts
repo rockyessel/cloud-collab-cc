@@ -1,22 +1,40 @@
-import fs from "fs";
-import path from "path";
-import CryptoJS from "crypto-js";
+import { connectToDB } from "@/lib/config/mongoose";
 import { PANGEA_OBJ } from "@/lib/config/pangea";
+import { IdGen, formatFileSize } from "@/lib/helpers";
 import {
-  PangeaConfig,
   FileIntelService,
   FileScanService,
+  PangeaConfig,
 } from "pangea-node-sdk";
-import { IdGen, formatFileSize } from "@/lib/helpers";
-import { Client } from "@/lib/config/sanity";
+import path from "path";
+import fs from "fs";
 import OrgFile from "@/lib/model/file.model";
+import fsExtra from "fs-extra";
+import { Client } from "@/lib/config/sanity";
+import CryptoJS from "crypto-js";
+import Organisation from "@/lib/model/organisation.model";
 
-const FileTemp = async (request: Request) => {
+async function* processFileHelper(request: Request) {
+  yield JSON.stringify({
+    message: "Starting process...",
+    success: false,
+    data: null,
+  });
+
+  await delay(500);
   try {
-    // Pangae Config Values
+    yield JSON.stringify({
+      message: "Receiving file...",
+      success: false,
+      data: null,
+    });
+
+    await delay(500);
+    connectToDB();
     const { domain, token } = PANGEA_OBJ;
+
     // Pangae File Intel Setup
-    const config = new PangeaConfig({ domain: domain });
+    const config = new PangeaConfig({ domain });
     const fileIntel = new FileIntelService(String(token), config);
     const options = { provider: "reversinglabs", verbose: true, raw: true };
 
@@ -25,133 +43,268 @@ const FileTemp = async (request: Request) => {
     const file = fileData.get("file") as unknown as File;
     const data = await file.arrayBuffer();
 
-    // Generates Unique Values
-    const uniquePath = IdGen("ORG");
+    if (file.type) {
+      yield JSON.stringify({
+        message: "File received...",
+        success: false,
+        data: null,
+      });
 
-    // Create Dir
-    const directoryPath = path.join(process.cwd(), "public", "tmp", uniquePath);
-    fs.mkdirSync(directoryPath, { recursive: true });
+      await delay(500);
+    }
 
-    // Structure File Path
+    // Generates a unique directory path and create the directory
+    const directoryPath = generateUniquePath();
+    yield JSON.stringify({
+      message: "Generating file directory...",
+      success: false,
+      data: null,
+    });
+    await delay(500);
+    createDirectory(directoryPath);
+    yield JSON.stringify({
+      message: "File directory generated...",
+      success: false,
+      data: null,
+    });
+    await delay(500);
+
+    // Creates a full file path and write the file
     const filePath = path.join(directoryPath, file.name);
-
-    // Write the Path
-    let writeStream = fs.createWriteStream(filePath);
-
-    // Create And Promisify the writeStream
-    // Reason is the "fs.existsSync(filePath)" will run first
-    // before we can even store the file.
-    // Thus, so we have to promisify the writeStream
-    const writeStreamPromise = new Promise((resolve, reject) => {
-      writeStream.on("finish", resolve);
-      writeStream.on("error", reject);
+    await writeFile(filePath, Buffer.from(data));
+    yield JSON.stringify({
+      message: "Generating hash...",
+      success: false,
+      data: null,
     });
-    writeStream.write(Buffer.from(data));
-    writeStream.end();
-    await writeStreamPromise;
+    await delay(500);
 
-    // Generate the file url, using Sanity.io
-    const buffer = Buffer.from(data);
-    const fileObj = await Client.assets.upload("file", buffer, {
-      filename: `${new Date()}${file.name}`,
-    });
-
-    // Construct File structure.
-    const insertFile = {
-      localIdPath: "", // Get the rewrriten path
-      hash: "",
-      proxyURL: IdGen("file"),
-      score: "",
-      fileUrl: fileObj.url,
-      size: formatFileSize(file.size),
-      originalFilename: file.name,
-      mimeType: fileObj.mimeType,
-      extension: fileObj.extension,
-      sanityCMSId: fileObj.assetId,
-    };
-
-    // Making sure File Path Is Created.
     if (fs.existsSync(filePath)) {
-      // Read File
-      const readFile = fs.readFileSync(filePath, "utf8");
+      // Reads the file content and then generates the file hash
+      const readFileContent = await readFile(filePath);
+      const fileHash = generateFileHash(readFileContent);
 
-      // Create Hash And verify
-      const sha256 = CryptoJS.algo.SHA256.create();
-      sha256.update(readFile);
-      const fileHash = sha256.finalize().toString();
-      // Verify hash reputation
-      const response = await fileIntel.hashReputation(
-        fileHash,
-        "sha256",
-        options
-      );
+      yield JSON.stringify({
+        message: "Hash generated. Checking hash reputation...",
+        success: false,
+        data: null,
+      });
+      await delay(500);
 
-      console.log("response.body: ", response.result);
+      // Checks the hash reputation using Pangae File Intel
+      const response = await fileIntel.hashReputation(fileHash, "sha256", {
+        provider: "reversinglabs",
+        verbose: true,
+        raw: true,
+      });
 
-      // Perform a deeper scan, if the "verdict = unknown"
-      const { score, verdict } = response.result.data;
-      if (score !== 0 && verdict !== "benign") {
-        const config = new PangeaConfig({
-          domain: domain,
-          queuedRetryEnabled: true,
-          pollResultTimeoutMs: 60 * 1000,
+      const { score } = response.result.data;
+
+      // console.log("score: ", score);
+
+      if (shouldRejectFile(score)) {
+        // Uploads a file to Sanity.io
+        const fileObj = await uploadFileToSanity(
+          Buffer.from(data),
+          `${new Date()}${file.name}`
+        );
+
+        // Constructs a file object for insertion in MongoDB
+        const insertFile = {
+          hash: "",
+          proxyURL: IdGen("file"),
+          score: "",
+          fileUrl: fileObj.url,
+          uploadedBy: "",
+          size: file.size,
+          sizeByte: formatFileSize(file.size),
+          originalFilename: file.name,
+          mimeType: fileObj.mimeType,
+          extension: fileObj.extension,
+          sanityCMSId: fileObj.assetId,
+        };
+
+        // Rejects the file and delete the directory
+        yield JSON.stringify({
+          message: "Deleting File directory...",
+          success: false,
+          data: null,
         });
+        await fsExtra.remove(directoryPath);
+        await delay(500);
 
-        const client = new FileScanService(String(token), config);
-        const response = await client.fileScan(options, filePath);
+        // console.log("directoryPath: ", directoryPath);
 
-        console.log(response.result.data);
+        yield JSON.stringify({
+          message: "File directory deleted...",
+          success: false,
+          data: null,
+        });
+        await delay(500);
 
-        // So in this project, files "50" score and a
-        // verdict of "suspicious", will be rewritten
-        // Above "50" will be rejected.
-
-        const { score, verdict } = response.result.data;
-        if (score >= 50 && verdict === "suspicious") {
-          // Rewrite the file
-          // Create a new file with the same content
-          // This file will be saved temp for 24 hours.
-          // And it will be made available for the user to download.
-          // Since it will have the right "hash" we wrote for it.
-          const rewrittenFilePath_ = path.join(
-            directoryPath,
-            `${fileHash}_${file.name}`
-          );
-          fs.writeFileSync(rewrittenFilePath_, readFile);
-
-          // Remove the original file
-          fs.unlinkSync(filePath);
-
-          insertFile.score = String(score);
-          insertFile.hash = fileHash;
-          insertFile.localIdPath = rewrittenFilePath_;
-
-          const fileInserted = await OrgFile.create({ ...insertFile });
-
-          return Response.json({
-            status: true,
-            data: fileInserted,
-            msg: "Uploaded successfully.",
-          });
-        }
-      } else {
-        // Remove the original file
-        fs.unlinkSync(filePath);
-
+        // Update the file object with score and hash, then insert into MongoDB
         insertFile.score = String(score);
+        insertFile.hash = fileHash;
+
         const fileInserted = await OrgFile.create({ ...insertFile });
 
-        return Response.json({
-          status: true,
+        yield JSON.stringify({
+          message: "File link generated",
+          success: true,
           data: fileInserted,
-          msg: "Uploaded successfully.I",
+        });
+      } else {
+        // Rejects the file and delete the directory
+        yield JSON.stringify({
+          message: "Deleting File directory...",
+          success: false,
+          data: null,
+        });
+        await fsExtra.remove(directoryPath);
+        await delay(500);
+
+        yield JSON.stringify({
+          message: "File is corrupted. Try another file.",
+          success: false,
+          data: null,
         });
       }
     }
   } catch (error) {
-    console.log(error);
-    return Response.json({ success: false });
+    // console.log(error);
+    yield "Error occurred.";
+    return { success: false };
+  }
+}
+
+const FileHandler = async (request: Request) => {
+  switch (request.method) {
+    case "POST":
+      const { readable, writable } = new TransformStream();
+
+      // Create a writer and a generator iterator
+      const writer = writable.getWriter();
+      const generator = processFileHelper(request);
+
+      // Process the generator and write its output to the stream
+      (async function () {
+        for await (const message of generator) {
+          const encoder = new TextEncoder();
+          const encodedMessage = encoder.encode(message + "\n");
+          await writer.write(encodedMessage);
+        }
+
+        writer.close();
+      })();
+
+      return new Response(readable, {
+        headers: { "Content-Type": "text/plain" },
+      });
+
+    case "PUT":
+      const { file } = await request.json();
+
+      // Query Params
+      const { searchParams } = new URL(request.url);
+      const orgId = searchParams.get("orgId");
+      const uploadedBy = searchParams.get('uploadedBy')
+
+
+
+      // console.log("Update file: ", file);
+      // console.log("orgId: ", orgId);
+
+      if (!orgId)
+        return Response.json({
+          success: false,
+          data: null,
+          msg: "Organisation ID is not found.",
+        });
+
+      if (!file._id)
+        return Response.json({
+          success: false,
+          data: null,
+          msg: "File ProxyURL not found.",
+        });
+
+      const foundFile = await OrgFile.findById(file._id);
+      const foundOrg = await Organisation.findById(orgId);
+
+      if (!foundOrg)
+        return Response.json({
+          success: false,
+          data: null,
+          msg: "Organisation not found.",
+        });
+      if (!foundFile)
+        return Response.json({
+          success: false,
+          data: null,
+          msg: "File not found.",
+        });
+
+      console.log("Found File - Update: ", foundFile);
+
+      // Update the organizationId of the file using findOneAndUpdate
+      const updatedFile = await OrgFile.findOneAndUpdate(
+        { _id: file._id },
+        { $set: { organizationId: foundOrg._id, uploadedBy } },
+        { new: true }
+      );
+
+      if (!updatedFile) return Response.json({ success: false });
+
+      return Response.json({ success: true });
+
+    default:
+      break;
   }
 };
 
-export { FileTemp as POST };
+function delay(milliseconds: number) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
+const createDirectory = (directoryPath: string) => {
+  fs.mkdirSync(directoryPath, { recursive: true });
+};
+
+const generateFileHash = (fileContent: string) => {
+  const sha256 = CryptoJS.algo.SHA256.create();
+  sha256.update(fileContent);
+  return sha256.finalize().toString();
+};
+
+const shouldRejectFile = (score: number) => {
+  return score >= 50 || score === -1;
+};
+
+const generateUniquePath = () => {
+  return path.join(process.cwd(), "public", "tmp", IdGen("ORG"));
+};
+
+const writeFile = async (filePath: string, data: Buffer) => {
+  await fs.promises.writeFile(filePath, data);
+};
+
+const readFile = async (filePath: string) => {
+  return await fs.promises.readFile(filePath, "utf8");
+};
+
+const uploadFileToSanity = async (buffer: Buffer, filename: string) => {
+  return await Client.assets.upload("file", buffer, { filename });
+};
+
+const performFileScan = async (filePath: string, options: any) => {
+  const config = new PangeaConfig({
+    domain: PANGEA_OBJ.domain,
+    queuedRetryEnabled: true,
+    pollResultTimeoutMs: 60 * 1000,
+  });
+
+  const client = new FileScanService(String(PANGEA_OBJ.token), config);
+  return await client.fileScan(options, filePath);
+};
+
+export { FileHandler as POST, FileHandler as GET, FileHandler as PUT };

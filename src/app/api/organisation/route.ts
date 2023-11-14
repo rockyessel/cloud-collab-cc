@@ -8,35 +8,105 @@ const OrganisationHandler = async (request: Request) => {
       case "POST":
         try {
           const { org } = await request.json();
-
-          // org
-          console.log(org);
-
-          const create = await Organisation.create({ ...org });
-
-          console.log(create);
-
-          return Response.json({ status: true, data: create });
+          if (!org)
+            return Response.json({
+              success: false,
+              data: {},
+              msg: "Data is undefined.",
+            });
+          try {
+            const created = await Organisation.create({ ...org });
+            if (created) {
+              console.log("reached here?3");
+              console.log(created);
+              return Response.json({ success: true, data: created });
+            }
+          } catch (error) {
+            console.log(error);
+            return Response.json({ success: false, data: {}, msg: error });
+          }
+          return Response.json({
+            success: false,
+            error: "Something went wrong.",
+          });
         } catch (error) {
-          return Response.json({ status: false, error });
+          return Response.json({ success: false, error });
         }
 
       case "GET":
         try {
           const { searchParams } = new URL(request.url);
-          const ownerId = searchParams.get("ownerId");
+          const memberId = searchParams.get("memberId");
 
-          // const orgs = await 
+          console.log("memberId: ", memberId);
+
+          if (!memberId)
+            return Response.json({ success: false, msg: "Id is required." });
+
+          const foundOrganizations = await Organisation.find({
+            members: memberId,
+          });
+
+          if (!foundOrganizations)
+            return Response.json({
+              success: false,
+              error: "No organisation.",
+              daa: null,
+            });
+
+          return Response.json({ success: true, data: foundOrganizations });
         } catch (error) {
-          return Response.json({ status: false, error });
+          return Response.json({ success: false, error });
+        }
+
+      case "PUT":
+        try {
+          const { org } = await request.json();
+          if (!org)
+            return Response.json({
+              success: false,
+              data: {},
+              msg: "Data is undefined.",
+            });
+
+          const { _id, ...orgData } = org;
+
+          if (!_id)
+            return Response.json({
+              success: false,
+              data: {},
+              msg: "_id is required for updating.",
+            });
+
+          const updated = await Organisation.findByIdAndUpdate(_id, orgData, {
+            new: true,
+          });
+
+          if (updated) {
+            console.log("Organization updated successfully:", updated);
+            return Response.json({ success: true, data: updated });
+          } else {
+            return Response.json({
+              success: false,
+              data: {},
+              msg: "Organization not found for the given _id.",
+            });
+          }
+        } catch (error) {
+          console.log(error);
+          return Response.json({ success: false, data: {}, msg: error });
         }
 
       default:
-        break;
+        return Response.json({ success: false, error: "IMethod not allowed." });
     }
   } catch (error) {
-    return Response.json({ status: false, error: "Internal server error" });
+    return Response.json({ success: false, error: "Internal server error" });
   }
 };
 
-export { OrganisationHandler as POST };
+export {
+  OrganisationHandler as POST,
+  OrganisationHandler as GET,
+  OrganisationHandler as PUT,
+};

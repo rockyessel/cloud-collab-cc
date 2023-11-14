@@ -2,15 +2,18 @@
 
 import { useAuth } from "@pangeacyber/react-auth";
 import LogoSVG from "../reusables/logo";
-import NextImage from "../reusables/next-image";
 import NextLink from "../reusables/next-link";
 import cookieCutter from "cookie-cutter";
+import { useEffect, useState } from "react";
 
 const Navbar = () => {
   const { login, user, authenticated, getToken, loading } = useAuth();
-  cookieCutter.set("token", getToken());
+  const [loaded, setLoaded] = useState(false);
 
-  console.log("token: ", getToken());
+  useEffect(() => {
+    if (loaded) cookieCutter.set("token", getToken());
+    setLoaded(true);
+  }, [getToken, loaded]);
 
   console.log(user);
   return (

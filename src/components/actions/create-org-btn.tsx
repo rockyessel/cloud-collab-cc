@@ -1,6 +1,7 @@
+
 import OrganisationModal from "../global/organisation-modal";
 
-const CreateOrgBtn = () => {
+const CreateOrgBtn = async () => {
   return <OrganisationModal />;
 };
 

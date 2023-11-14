@@ -1,31 +1,35 @@
 import { connectToDB } from "@/lib/config/mongoose";
 import File from "@/lib/model/file.model";
 
-const FileAccessHandler = async ({ params }: { params: { id: string } }) => {
+interface Props {
+  response: Response;
+  params: { params: { id: string } };
+}
+
+const FileAccessHandler = async (
+  response: Response,
+  { params }: { params: { id: string } }
+) => {
   connectToDB();
+  const { id } = params;
+  try {
+    if (!id) {
+      return Response.json({ success: false });
+    }
+    const foundFile = await File.findOne({ proxyURL: id });
 
-  const foundFile = await File.findOne({ proxyURL: params.id });
-
-  if (foundFile) {
-    try {
-      // Fetch the actual file from the original URL
-      const response = await fetch(foundFile.url);
-
-      // Set the appropriate response headers
-
+    if (foundFile) {
       const headers = new Headers({
         "Content-Type": foundFile.mimeType,
-        "Content-Disposition": `inline; filename="${foundFile.originalFilename}"`, // Set to 'inline'
+        "Content-Disposition": `inline; filename="${foundFile.originalFilename}"`,
       });
 
-      // Serve the file to the client by piping the response stream
+      const response = await fetch(foundFile.fileUrl);
       return new Response(response.body, { status: 200, headers });
-    } catch (error) {
-      console.error("Error fetching file:", error);
-      return new Response("Error fetching file", { status: 500 });
     }
-  } else {
-    return new Response("File not found", { status: 404 });
+  } catch (error) {
+    console.log(error);
+    return Response.json({ error });
   }
 };
 

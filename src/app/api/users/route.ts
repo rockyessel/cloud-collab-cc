@@ -1,166 +1,75 @@
-import bcrypt from "bcrypt";
-import { UserProps } from "@/interface";
 import { connectToDB } from "@/lib/config/mongoose";
-import { responseObject } from "@/lib/constants";
 import User from "@/lib/model/user.model";
 
 const UserHandler = async (request: Request) => {
-  
   connectToDB();
-  switch (request.method) {
-    // Create
-    case "POST":
-      try {
-        const { name, email, authType, image, username, role, password } =
-          await request.json();
-        if (!name)
-          return Response.json({ ...responseObject, msg: "Name is required." });
-        if (!email)
-          return Response.json({
-            ...responseObject,
-            msg: "Email is required.",
-          });
+  try {
+    switch (request.method) {
+      case "GET":
 
-        if (!password)
-          return Response.json({
-            ...responseObject,
-            msg: "Password is required.",
-          });
-        const foundUser = await User.findOne({ email });
-        if (foundUser)
-          return Response.json({
-            ...responseObject,
-            msg: "User has already registered. Log in.",
-          });
-        const newUsername = email.split("@")[0];
-        const foundUserWithSameUsername = await User.findOne({ username });
-        const userData: UserProps = {
-          name,
-          email,
-          authType,
-          username: "",
-          image: "",
-          id: "",
-          password: "",
-          role,
-          isActive: true,
-        };
-        if (authType === "provider") {
-    
-          userData.image = image || ""; // Providers will always provide an image
-          userData.password = "";
-        } else if (authType === "credential") {
-          const hashedPassword = await bcrypt.hash(password, 12);
-          userData.image = "/default-profile.png";
-          userData.password = hashedPassword;
-        }
-        const { id, ...removedId } = userData;
-        const insertedUser = await User.create(removedId);
-        return Response.json({
-          msg: "User registered successfully",
-          success: true,
-          data: insertedUser,
-        });
-      } catch (error) {
-        console.error("Error creating user:", error);
-        const err = error as { message: string };
-        return Response.json({
-          ...responseObject,
-          msg: `User creation failed. Error: ${err.message}`,
-        });
-      }
-    // Update
-    case "PUT":
-      try {
-        const { user, userId } = await request.json();
-        const { email } = user;
-
-        if (!email) {
-          return Response.json({
-            ...responseObject,
-            msg: "Email is required.",
-          });
+        try {
+          const users = await User.find({});
+          return Response.json({ success: true, data: users });
+        } catch (error) {
+          return Response.json({ success: false, error });
         }
 
-        const foundUser = await User.findById({ id: userId });
+      case "POST":
+        try {
+          const { user } = await request.json();
+          if (!user)
+            return Response.json({
+              success: false,
+              data: {},
+              msg: "Data is undefined.",
+            });
 
-        if (!foundUser) {
-          return Response.json({ ...responseObject, msg: "User not found." });
+          const created = await User.create({ ...user });
+
+          if (created) {
+            console.log("User created successfully:", created);
+            return Response.json({ success: true, data: created });
+          } else {
+            return Response.json({
+              success: false,
+              data: {},
+              msg: "Error creating user.",
+            });
+          }
+        } catch (error) {
+          console.log(error);
+          return Response.json({ success: false, data: {}, msg: error });
         }
 
-        const updatedArticle = await User.findOneAndUpdate(
-          { id: userId },
-          { $set: user },
-          { new: true }
-        );
-        if (updatedArticle) {
-          return Response.json({
-            msg: "User updated successfully",
-            success: true,
-            data: updatedArticle,
-          });
-        }
-      } catch (error) {
-        console.error("Error updating user:", error);
-        const err = error as { message: string };
-        return Response.json({
-          ...responseObject,
-          msg: `User update failed. Error: ${err.message}`,
-        });
-      }
-    // Get All User
-    case "GET":
-      try {
-        const users = await User.find({});
-        return Response.json({
-          msg: "User deleted successfully",
-          success: true,
-          data: users,
-        });
-      } catch (error) {
-        const err = error as { message: string };
-        console.error("Error fetching user by field:", error);
-        return Response.json({
-          ...responseObject,
-          msg: `Error fetching user by field, ${err.message}`,
-        });
-      }
-    // Delete
-    case "DELETE":
-      try {
-        const { userId } = await request.json();
-
-        const deletedUser = await User.findByIdAndDelete(userId);
-
-        if (deletedUser) {
-          return Response.json({
-            msg: "User deleted successfully",
-            success: true,
-            data: deletedUser,
-          });
-        } else {
-          return Response.json({ ...responseObject, msg: "User not found." });
-        }
-      } catch (error) {
-        console.error("Error deleting user:", error);
-        const err = error as { message: string };
-        return Response.json({
-          ...responseObject,
-          msg: `User deletion failed. Error: ${err.message}`,
-        });
-      }
-
-    default:
-      return Response.json({
-        ...responseObject,
-        msg: `Method not allowed.`,
-      });
+      default:
+        return Response.json({ success: false, error: "Method not allowed." });
+    }
+  } catch (error) {
+    return Response.json({ success: false, error: "Internal server error" });
   }
 };
 
-export {
-  UserHandler as GET,
-  UserHandler as POST,
-  UserHandler as DELETE,
-  UserHandler as PUT,
+export { UserHandler as GET, UserHandler as POST };
+
+
+const createUserIfNotExists = async (userData) => {
+  const { pangeaId } = userData;
+
+  try {
+    // Check if user with the given pangeaId already exists
+    const existingUser = await User.findOne({ pangeaId });
+
+    if (existingUser) {
+      console.log(`User with pangeaId ${pangeaId} already exists.`);
+      return existingUser; // User already exists, return the existing user
+    }
+
+    // User doesn't exist, create a new user
+    const createdUser = await User.create(userData);
+    console.log(`User with pangeaId ${pangeaId} created successfully.`);
+    return createdUser;
+  } catch (error) {
+    console.error(`Error checking/creating user: ${error}`);
+    throw error; // Handle the error as needed in your application
+  }
 };

@@ -5,34 +5,40 @@ import NextImage from "../reusables/next-image";
 import { GearIcon } from "@radix-ui/react-icons";
 import Button from "../reusables/button";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { InitialOrganizationData } from "@/interface";
+import NextLink from "../reusables/next-link";
 
-const OrganisationCard = () => {
+interface Props {
+  org: InitialOrganizationData;
+}
+
+const OrganisationCard = ({ org }: Props) => {
   const [bookmarksChecked, setBookmarksChecked] = useState(true);
   const [urlsChecked, setUrlsChecked] = useState(false);
   const [person, setPerson] = useState("pedro");
 
   return (
-    <div className="p-4 rounded-lg border border-gray-600 shadow-lg">
+    <div className="p-4 rounded-lg border border-[#003143] shadow-lg text-gray-300">
       <div className="flex items-start justify-between">
         <div className="flex items-start gap-2">
           <NextImage
             alt="Organisation's Logo"
-            src="/logo.svg"
+            src={org.logo}
             width={100}
             height={100}
             className="rounded-lg p-2 bg-gray-100"
           />
           <p className="inline-flex flex-col items-start">
-            <span className="text-2xl font-medium">Pangea</span>
-            <span>11 members</span>
-            <span>21,123 Files</span>
+            <span className="text-2xl font-medium">{org.name}</span>
+            <span>{org.members.length} members</span>
+            <span>{org.files.length} Files</span>
           </p>
         </div>
 
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
-            <Button className="p-4 rounded-lg bg-gray-100 hover:bg-gray-300">
-              <GearIcon fontSize={30} className="text-2xl" />
+            <Button className="p-4 rounded-lg bg-slate-400 hover:bg-slate-600">
+              <GearIcon fontSize={30} className="text-2xl text-black" />
             </Button>
           </DropdownMenu.Trigger>
 
@@ -153,13 +159,11 @@ const OrganisationCard = () => {
         </DropdownMenu.Root>
       </div>
       <div>
-        <p className="py-4">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint culpa et
-          eligendi? Consequuntur, nam culpa facilis reprehenderit cum nulla,
-          deleniti vero odio deserunt possimus, similique expedita in nostrum
-          sed quos.II
-        </p>
-        <i>No organisation description provided yet.</i>
+        {org.description ? (
+          <p className="py-4">{org.description}</p>
+        ) : (
+          <i>No organisation description provided yet.</i>
+        )}
       </div>
       <div>
         <div>
@@ -176,9 +180,9 @@ const OrganisationCard = () => {
         </div>
       </div>
 
-      <div>
-        <Button className="btn-outline-small px-4 py-2 text-black">View</Button>
-      </div>
+      <NextLink href={`/dashboard/org/${org._id}`}>
+        <Button className="btn-outline-small px-4 py-2">View</Button>
+      </NextLink>
     </div>
   );
 };

@@ -36,13 +36,7 @@ const HeroSection = () => {
           </div>
         </div>
         <div className="flex flex-col items-stretch w-[48%] ml-5 max-md:w-full max-md:ml-0">
-          <NextImage
-            width={500}
-            height={500}
-            alt=""
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/919a1a99-37d0-42f0-8915-16174dda671b?apiKey=331e0e30f65c4a9dafd410e2c2e475a4&"
-            className="aspect-[1.22] object-contain object-center w-full justify-center items-center overflow-hidden grow max-md:max-w-full max-md:mt-10"
-          />
+          {/* // className="aspect-[1.22] object-contain object-center w-full justify-center items-center overflow-hidden grow max-md:max-w-full max-md:mt-10" */}
         </div>
       </div>
     </div>

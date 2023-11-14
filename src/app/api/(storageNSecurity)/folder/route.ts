@@ -9,22 +9,24 @@ const FolderHandler = async (request: Request) => {
     // Create Folder
     case "POST":
       try {
-        const { name, userId } = await request.json();
-        console.log("{ name, userId }", { name, userId });
+        const { name, orgId, description } = await request.json();
+        console.log("{ name, orgId }", { name, orgId });
         if (!name) {
           return Response.json({ ...responseObject, msg: "Name is required." });
         }
 
-        if (!userId) {
+        if (!orgId) {
           return Response.json({
             ...responseObject,
-            msg: "User ID is required.",
+            msg: "Organisation ID is required.",
           });
         }
 
-
-
-        const folder = await Folder.create({ name, userId });
+        const folder = await Folder.create({
+          name,
+          organizationId: orgId,
+          description,
+        });
 
         console.log("folder: ", folder);
 
@@ -44,7 +46,7 @@ const FolderHandler = async (request: Request) => {
 
     case "PUT":
       try {
-        const { folderId, name } = await request.json();
+        const { folderId, name, description } = await request.json();
 
         if (!name) {
           return Response.json({ ...responseObject, msg: "Name is required." });
@@ -89,7 +91,7 @@ const FolderHandler = async (request: Request) => {
       try {
         const { searchParams } = new URL(request.url);
         const folderId = searchParams.get("folderId");
-        const userId = searchParams.get("userId");
+        const orgId = searchParams.get("orgId");
 
         if (!folderId) {
           return Response.json({
@@ -98,10 +100,10 @@ const FolderHandler = async (request: Request) => {
           });
         }
 
-        if (!userId) {
+        if (!orgId) {
           return Response.json({
             ...responseObject,
-            msg: "User ID is missing in the request.",
+            msg: "Organisation ID is missing in the request.",
           });
         }
 
@@ -109,7 +111,7 @@ const FolderHandler = async (request: Request) => {
 
         const deletedFolder = await Folder.findOneAndDelete({
           _id: folderId,
-          userId,
+          orgId,
         });
 
         if (!deletedFolder) {
@@ -133,23 +135,23 @@ const FolderHandler = async (request: Request) => {
         });
       }
 
-    //   Get Folder associated to a user bg ID
+    //   Get Folder associated to a Org bg ID
     case "GET":
       try {
         const { searchParams } = new URL(request.url);
-        const userId = searchParams.get("userId");
+        const orgId = searchParams.get("orgId");
 
-        if (!userId) {
+        if (!orgId) {
           return Response.json({
             ...responseObject,
-            msg: "Folder ID is missing in the request.",
+            msg: "Org ID is missing in the request.",
           });
         }
 
-        const folders = await Folder.find({ userId });
+        const folders = await Folder.find({ organisationId: orgId });
 
         return Response.json({
-          msg: "Folder deleted successfully.",
+          msg: "Folder fetched successfully.",
           success: true,
           data: folders,
         });

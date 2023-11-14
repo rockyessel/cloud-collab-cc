@@ -7,20 +7,28 @@ import { BsFileEarmarkPlus, BsFiles } from "react-icons/bs";
 import Button from "../reusables/button";
 import { UserProps } from "@/interface";
 import UploadFileCard from "./upload-file-card";
+import { useAuth } from "@pangeacyber/react-auth";
+import { toast } from "sonner";
+import DataTraffic from "@/lib/model/dataTraffic.model";
 
-const UploadModel = () => {
+interface Props {
+  pageId?: string;
+}
+
+const UploadModel = ({ pageId }: Props) => {
   const [files, setFiles] = useState<File[]>([]);
   const [progress, setProgress] = useState(0);
   const [filesProgressPercentage, setFilesProgressPercentage] = useState(0);
   const [urlValue, setUrlValue] = useState("");
 
+  const { user } = useAuth();
+
+  const currentUser = { ...user } as UserProps;
+
   const handleRemoveFile = (name: string) => {
     const removed_file = files.filter((file) => file.name !== name);
     setFiles(removed_file);
   };
-
-
-  const currentUser = { } as UserProps;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -46,21 +54,80 @@ const UploadModel = () => {
     try {
       event.preventDefault();
 
-      if (currentUser.id) {
+      if (currentUser.active_token.id && pageId) {
         const data = new FormData();
         files.forEach((file) => {
           data.append(`files`, file);
         });
-        data.append("userId", currentUser.id);
-
-        const res = await fetch("http://localhost:3000/api/storages/file", {
-          method: "POST",
-          body: data,
-        });
-        console.log("res", res);
+        data.append("uploadedBy", currentUser.active_token.id);
+        data.append("organizationId", pageId);
+        fetchFile(data);
       }
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const fetchFile = async (formData: FormData): Promise<void> => {
+    try {
+      const response = await fetch(
+        "http://localhost:3000/api/files/multiples",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      if (!response.body) throw new Error("Response body is undefined");
+      const reader = response.body.getReader();
+      let chunks: string = "";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const message: string = new TextDecoder().decode(value);
+        console.log(message);
+        try {
+          const parsedData = JSON.parse(message);
+          if (parsedData.message) {
+            if (parsedData.message === "Error occurred.") {
+              toast.dismiss();
+            }
+
+            // Display the toast
+            toast.promise(
+              new Promise((resolve) => {
+                if (parsedData.success) resolve(parsedData.message);
+              }),
+              {
+                loading: `${parsedData.message}`,
+                success: () => {
+                  return `${
+                    parsedData.message as { message: string | number }
+                  } toast has been added`;
+                },
+                error: "Error",
+              }
+            );
+
+            // If the message contains 'File generated', display a success toast
+            if (
+              parsedData.success &&
+              parsedData.message === "All files processed successfully."
+            ) {
+              toast.success("File(s) uploaded successfully");
+              toast.dismiss();
+            }
+          }
+        } catch (error) {
+          console.error("Error parsing JSON content:", error);
+        }
+        chunks += message;
+        if (chunks.includes("File generated")) {
+          // Reset chunks after 'File generated'
+          chunks = "";
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
   };
 
@@ -69,10 +136,10 @@ const UploadModel = () => {
 
     return (
       <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[100] top-0">
-        <div className="bg-white rounded-lg p-4 shadow-lg w-[35rem] z-[100]">
+        <div className="bg-slate-900 rounded-lg p-4 shadow-lg w-[35rem] z-[100]">
           <button
             onClick={closeModal}
-            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+            className="absolute top-2 right-2 text-gray-200 hover:text-gray-300"
           >
             Close
           </button>
@@ -83,10 +150,10 @@ const UploadModel = () => {
   };
 
   return (
-    <div className="text-xs">
+    <div className="">
       <Button
         onClick={openModal}
-        className="text-xs font-normal button-outline-small gap-1"
+        className=" font-normal button-outline-small gap-1"
       >
         <BsFileEarmarkPlus className="text-lg" />
         <span>Upload File</span>
@@ -99,14 +166,14 @@ const UploadModel = () => {
         </div>
 
         {urlValue.length > 0 ? null : (
-          <label className="rounded-sm border-dashed border-2 border-gray-900/20 flex flex-col items-center justify-center p-5">
+          <label className="rounded-sm border-dashed border-2 border-[#003143] flex flex-col items-center justify-center p-5">
             {files.length > 0 ? (
               <Fragment>
                 {/* <ProgressCircle value={filesProgressPercentage} /> */}
                 <p className="font-normal my-2">
-                 {` Click "Upload" to import your files.`}
+                  {` Click "Upload" to import your files.`}
                 </p>
-                <p className="inline-flex items-center text-xs gap-1">
+                <p className="inline-flex items-center  gap-1">
                   Total files:
                   <span className="inline-flex items-center">
                     {files.length} <BsFiles />
@@ -116,7 +183,7 @@ const UploadModel = () => {
             ) : (
               <Fragment>
                 <ImUpload className="text-3xl" />
-                <span className="text-xs">Click to browse</span>
+                <span className="">Click to browse</span>
                 <input
                   type="file"
                   name="file"
@@ -134,7 +201,7 @@ const UploadModel = () => {
           <Fragment>
             {/* Files Options */}
             <div className="flex justify-end items-center gap-2 my-2">
-              <label className="button-small text-xs !p-1">
+              <label className="button-small  !p-1">
                 Add more
                 <input
                   type="file"
@@ -145,7 +212,7 @@ const UploadModel = () => {
                 />
               </label>
               <Button
-                className="button-outline-small text-xs !p-1"
+                className="button-outline-small  !p-1"
                 type="button"
                 title="Clear"
                 onClick={handleClear}
@@ -179,7 +246,7 @@ const UploadModel = () => {
               onClick={closeModal}
               type="button"
               title="Discard"
-              className="button-outline-small text-xs"
+              className="button-outline-small border border-rose-700 rounded-lg p-3 "
             >
               Discard
             </Button>
@@ -188,8 +255,8 @@ const UploadModel = () => {
               type="button"
               title="Import"
               onClick={handleSubmission}
-              className={`button-small bg-green-500 ${
-                !files.length ? "bg-pink-200 cursor-not-allowed" : ""
+              className={`button-small border border-[#12485b] rounded-lg p-3 ${
+                !files.length ? "cursor-not-allowed text-[#12485b]" : ""
               }`}
             >
               Upload

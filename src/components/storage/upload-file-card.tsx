@@ -15,7 +15,7 @@ const UploadFileCard = ({ handleRemoveFile, progress, file }: Props) => {
   const extension = file?.name?.split(".").pop();
   console.log(file);
   return (
-    <li className="rounded-lg p-2 border transition ease-in-out delay-150">
+    <li className="rounded-lg p-2 border-[#003143] border transition ease-in-out delay-150">
       <span className="w-full flex items-end justify-end">
         <Button
           type={`button`}
@@ -27,8 +27,11 @@ const UploadFileCard = ({ handleRemoveFile, progress, file }: Props) => {
         </Button>
       </span>
       <div className="flex items-center gap-2">
-        <div className="border rounded-lg p-1">
-          <FileExtensionIcon class="text-2xl" extension={extension} />
+        <div className="border border-[#003143] rounded-lg p-1">
+          <FileExtensionIcon
+            class="text-2xl text-[#12485b]"
+            extension={extension}
+          />
         </div>
 
         <div className=" w-full flex justify-center flex-col">
@@ -42,10 +45,10 @@ const UploadFileCard = ({ handleRemoveFile, progress, file }: Props) => {
             </p>
           </div>
 
-          <div className="w-full overflow-hidden flex h-2 mb-4 text-xs rounded bg-black/10">
+          <div className="w-full overflow-hidden flex h-2 mb-4 text-xs rounded bg-[#003143] ">
             <div
               style={{ width: `${progress}%` }}
-              className="bg-black rounded-r"
+              className="bg-[#12485b] rounded-r"
             ></div>
           </div>
         </div>

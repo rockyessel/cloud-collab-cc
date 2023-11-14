@@ -1,69 +1,144 @@
 "use client";
 
-import { LayersIcon, UploadIcon } from "@radix-ui/react-icons";
+import axios from "axios";
 import Button from "../reusables/button";
-import { initialOrganizationData } from "@/lib/constants";
 import { useRouter } from "next/navigation";
+import * as Dialog from "@radix-ui/react-dialog";
+import { useAuth } from "@pangeacyber/react-auth";
+import { initialOrganizationData } from "@/lib/constants";
+import { LayersIcon, UploadIcon } from "@radix-ui/react-icons";
 import {
   ChangeEvent,
-  FormEvent,
+  Fragment,
   SyntheticEvent,
   useState,
   useTransition,
 } from "react";
-import axios from "axios";
-import * as Dialog from "@radix-ui/react-dialog";
-import { Cross2Icon } from "@radix-ui/react-icons";
-import { IdGen } from "@/lib/helpers";
+import { toast } from "sonner";
+import NextImage from "../reusables/next-image";
+import { FileProps, UserProps } from "@/interface";
 
 const OrganisationModal = () => {
   const [isPending, startTransition] = useTransition();
   const [orgForm, setOrgForm] = useState(initialOrganizationData);
+  const [orgFile, setOrgFile] = useState<FileProps>();
+  const { user } = useAuth();
 
-  const store = IdGen("file");
-
-  console.log("store: ", store);
   const router = useRouter();
+  const currentUser = { ...user } as UserProps;
+
+  console.log("currentUser: ", currentUser);
+  console.log("orgFile: ", orgFile);
+
   const handleFile = (event: ChangeEvent<HTMLInputElement>) => {
-    // @ts-ignore
-    const file = event!.target!.files[0]!;
-
-    if (file) {
+    const { target } = event;
+    if (target.files) {
+      const { files } = target;
+      const file = files[0];
       const formData = new FormData();
-
       formData.append("file", file);
-
-      const data = fetchFile(formData)
+      fetchFile(formData)
         .then((res) => res)
-        .catch((error) => error);
-      console.log(data);
+        .catch((error) => console.error(error));
     }
   };
 
   const handleSubmission = (event: SyntheticEvent) => {
+     toast.loading('Creating...');
     event.preventDefault();
+
+    if (!orgFile) {
+      toast.error("Still generating image link.");
+      return;
+    }
+
     initialOrganizationData.description = orgForm.description;
     initialOrganizationData.name = orgForm.name;
-    initialOrganizationData.owner = "user.id;";
+    initialOrganizationData.owner = currentUser.active_token.id;
+    initialOrganizationData.logo = `http://localhost:3000/api/temp/files/${orgFile?.proxyURL}`;
+
+    if (initialOrganizationData.members.includes(currentUser.active_token.id)) return;
+    else initialOrganizationData.members.push(`${currentUser.active_token.id}`);
+
+    if (!initialOrganizationData.owner) toast.error("User ID not provided.");
+    else if (!initialOrganizationData.name) toast.error("Name required.");
+    else if (!initialOrganizationData.description) toast.error("Description .");
+    else if (!initialOrganizationData.logo) toast.error("Please upload a logo.");
+
     startTransition(async () => {
       const { data } = await axios.post(
         `http://localhost:3000/api/organisation`,
         { org: initialOrganizationData }
       );
       router.refresh();
-      if (data.status) {
-        router.push(`/dashboard/org/${data.data.id}/`);
+      if(data.success){
+        toast.success('Created.')
+        const file = {...orgFile }
+       await axios.put(`http://localhost:3000/api/files?orgId=${data.data._id}&uploadedBy=${currentUser.active_token.id}`, {file});
       }
     });
   };
 
-  const fetchFile = async (formData: FormData) => {
-    const res = await fetch("http://localhost:3000/api/files", {
-      method: "POST",
-      body: formData,
-    });
-    const data = await res.json();
-    return data;
+  const fetchFile = async (formData: FormData): Promise<void> => {
+    try {
+      const response = await fetch("http://localhost:3000/api/files", {
+        method: "POST",
+        body: formData,
+      });
+      if (!response.body) throw new Error("Response body is undefined");
+      const reader = response.body.getReader();
+      let chunks: string = "";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const message: string = new TextDecoder().decode(value);
+        console.log(message);
+        try {
+          const parsedData = JSON.parse(message);
+          if (parsedData.message) {
+            // Display the toast
+            toast.promise(
+              new Promise((resolve) => {
+                if (parsedData.success) resolve(parsedData.message);
+              }),
+              {
+                loading: `${parsedData.message}`,
+                success: () => {
+                  return `${
+                    parsedData.message as { message: string | number }
+                  } toast has been added`;
+                },
+                error: "Error",
+              }
+            );
+
+            // If the message contains 'File generated', display a success toast
+            if (
+              parsedData.success &&
+              parsedData.message === "File link generated"
+            ) {
+              toast.success("File generated successfully");
+              toast.dismiss();
+            }
+          }
+          if (parsedData.data) {
+            // Set file data for further display
+            setOrgFile(parsedData.data);
+            // Handle JSON data as needed
+            console.log("Parsed Data:", parsedData.data);
+          }
+        } catch (error) {
+          console.error("Error parsing JSON content:", error);
+        }
+        chunks += message;
+        if (chunks.includes("File generated")) {
+          // Reset chunks after 'File generated'
+          chunks = "";
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
 
   const handleFormInput = async (
@@ -107,8 +182,20 @@ const OrganisationModal = () => {
               </label>
               <fieldset className="flex items-start gap-4">
                 <div className="bttn bttn-rose w-[10rem] h-[10rem] flex flex-col gap-2">
-                  <UploadIcon color="#f43f5e" width="30px" height="30px" />
-                  <span className="font-bold text-gray-200">Logo</span>
+                  {orgFile ? (
+                    <NextImage
+                      width={200}
+                      height={200}
+                      alt=""
+                      src={`http://localhost:3000/api/temp/files/${orgFile?.proxyURL}`}
+                      className="object-cover object-center w-full h-full"
+                    />
+                  ) : (
+                    <Fragment>
+                      <UploadIcon color="#f43f5e" width="30px" height="30px" />
+                      <span className="font-bold text-gray-200">Logo</span>
+                    </Fragment>
+                  )}
                 </div>
                 <div>
                   <label className="bttn bttn-rose w-40 p-2 rounded-lg">
@@ -159,6 +246,7 @@ const OrganisationModal = () => {
                 onClick={handleSubmission}
                 type="submit"
                 className="text-gray-300 rose p-3 rounded-lg b-rose"
+                // disabled={}
               >
                 Create
               </Button>

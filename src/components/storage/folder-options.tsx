@@ -8,21 +8,20 @@ import DeleteFolderBtn from "../actions/delete-folder-btn";
 
 interface Props {
   folder: FolderProps;
+  pageId: string;
 }
 
-const FolderOptionCard = ({ folder }: Props) => {
+const FolderOptionCard = ({ folder, pageId }: Props) => {
   const [isNestedDropdownOpen, setNestedDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [fetchedFolders, setFetchedFolders] = useState<FolderProps[] | []>([]);
 
-  const currentUser = {  } as UserProps;
-
   useEffect(() => {
-    const fetchUserFolders = async (userId: string) => {
+    const fetchUserFolders = async (pageId: string) => {
       const {
         data: { data: folders },
       } = await axios.get<ResObj>(
-        `http://localhost:3000/api/storages/folder?userId=${userId}`
+        `http://localhost:3000/api/storages/folder?orgId=${pageId}`
       );
 
       const filteredFolders = folders.filter(
@@ -31,8 +30,8 @@ const FolderOptionCard = ({ folder }: Props) => {
       setFetchedFolders(filteredFolders);
       setLoading(false);
     };
-    if (currentUser.id) fetchUserFolders(currentUser.id);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (pageId) fetchUserFolders(pageId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -73,7 +72,7 @@ const FolderOptionCard = ({ folder }: Props) => {
         </div>
       )}
       <li className="py-2 px-4 cursor-pointer hover:bg-gray-100">Copy to</li>
-      <DeleteFolderBtn folderId={folder._id} />
+      {folder._id && <DeleteFolderBtn pageId={pageId} folderId={folder?._id} />}
     </ul>
   );
 };

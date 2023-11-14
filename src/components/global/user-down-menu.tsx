@@ -10,15 +10,11 @@ import {
   GearIcon,
   ExitIcon,
 } from "@radix-ui/react-icons";
-import NextLink from "../reusables/next-link";
 import Button from "../reusables/button";
 import { useAuth } from "@pangeacyber/react-auth";
 
 const UserDropdownMenu = () => {
   const { logout, user } = useAuth();
-
-  console.log(user);
-
   const { email, profile } = user;
 
 

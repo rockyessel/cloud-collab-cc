@@ -1,5 +1,6 @@
-import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { clsx, type ClassValue } from "clsx";
+import { ResObj } from "@/interface";
 
 export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
@@ -49,4 +50,43 @@ export const truncate = (str: string, num: number) => {
     return str;
   }
   return str.slice(0, num) + "...";
+};
+
+export const getBlurDataURL = async (url: string | null) => {
+  if (!url) {
+    return "data:image/webp;base64,AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  }
+  try {
+    const response = await fetch(
+      `https://wsrv.nl/?url=${url}&w=50&h=50&blur=5`
+    );
+    const buffer = await response.arrayBuffer();
+    const base64 = Buffer.from(buffer).toString("base64");
+
+    return `data:image/png;base64,${base64}`;
+  } catch (error) {
+    return "data:image/webp;base64,AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  }
+};
+
+export const handleCreateSession = async (session: any) => {
+  try {
+    const response = await fetch("http://localhost:3000/api/session", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ session }),
+    });
+
+    if (response.ok) {
+      const result: ResObj = await response.json();
+      console.log("Session created successfully:", result);
+      return result;
+    } else {
+      console.error("Failed to create session:", response.statusText);
+    }
+  } catch (error) {
+    console.error("Error creating session:", error);
+  }
 };

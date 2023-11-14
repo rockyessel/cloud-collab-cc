@@ -1,6 +1,6 @@
 "use client";
 
-import { ResObj, UserProps } from "@/interface";
+import { ResObj } from "@/interface";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
@@ -8,19 +8,18 @@ import { toast } from "sonner";
 
 interface Props {
   folderId: string;
+  pageId: string;
 }
 
-const DeleteFolderBtn = ({ folderId }: Props) => {
+const DeleteFolderBtn = ({ folderId, pageId }: Props) => {
   const [isPending, startTransition] = useTransition();
 
   const router = useRouter();
-  
-  const currentUser = {  } as UserProps;
 
   const handleDeletion = async (folderId: string) => {
     const loadId = toast.loading("Deleting folder.");
     const { data: d } = await axios.delete<ResObj>(
-      `http://localhost:3000/api/storages/folder?folderId=${folderId}&userId=${currentUser.id}`
+      `http://localhost:3000/api/storages/folder?folderId=${folderId}&orgId=${pageId}`
     );
     console.log("deletion: ", d);
     toast.dismiss(loadId);

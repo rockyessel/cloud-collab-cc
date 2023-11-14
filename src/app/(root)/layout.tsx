@@ -2,11 +2,10 @@ import "@/styles/globals.css";
 import { Toaster } from "sonner";
 import type { Metadata } from "next";
 import { LayoutProps } from "@/interface";
-import ThemeProvider from "@/lib/providers/theme";
 import PangaeAuthProvider from "@/lib/providers/pangae";
-// import '@radix-ui/themes/styles.css';
-// import "@radix-ui/themes/styles.css";
-//
+import NextProgressProvider from "@/lib/providers/progressbar";
+import NextTopLoader from "nextjs-toploader";
+
 export const metadata: Metadata = {
   title: "CloudCollab - Share file with teams.",
   description:
@@ -17,10 +16,11 @@ const RootLayout = ({ children }: LayoutProps) => {
   return (
     <html lang="en">
       <body>
-        <ThemeProvider>
-          <PangaeAuthProvider>{children}</PangaeAuthProvider>
-          <Toaster position="top-center" richColors expand={false} />
-        </ThemeProvider>
+        <PangaeAuthProvider>
+          <NextTopLoader />
+          {children}
+        </PangaeAuthProvider>
+        <Toaster position="top-center" richColors expand={false} />
       </body>
     </html>
   );

@@ -2,9 +2,13 @@ import { AiOutlineSearch } from "react-icons/ai";
 import CreateFolderBtn from "../actions/create-folder-btn";
 import UploadModel from "./upload-modal";
 
-const StorageSubNav = () => {
+interface Props {
+  pageId: string;
+}
+
+const StorageSubNav = ({ pageId }: Props) => {
   return (
-    <div className="flex items-center justify-between gap-4">
+    <div className="flex items-center justify-between gap-4 text-gray-200">
       <div className="px-4">
         <label className="sr-only">Search</label>
         <div className="relative">
@@ -20,9 +24,8 @@ const StorageSubNav = () => {
       </div>
 
       <div className="flex items-center gap-2">
-        <UploadModel />
-
-        <CreateFolderBtn />
+        <UploadModel pageId={pageId} />
+        <CreateFolderBtn orgId={pageId} />
       </div>
     </div>
   );

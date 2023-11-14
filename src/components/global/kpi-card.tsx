@@ -1,13 +1,12 @@
-import React from "react";
 
 const KpiCard = () => {
+
   return (
-    <div className="border p-4 rounded-lg shadow-sm">
+    <div className="border border-[#003143] p-4 rounded-lg shadow-sm text-gray-300">
       <div className="flex flex-col gap-2">
         <span>{`Org's Files`}</span>
         <div>
           <p className="font-bold text-4xl">123,323</p>
-  
         </div>
         <div>
           <p className="text-lg font-semibold">Active Users</p>

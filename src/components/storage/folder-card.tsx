@@ -9,23 +9,24 @@ import FolderOptionCard from "./folder-options";
 
 interface Props {
   folder: FolderProps;
+  pageId: string;
 }
 
-const FolderCard = ({ folder }: Props) => {
+const FolderCard = ({ folder, pageId }: Props) => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
 
   return (
-    <div className="rounded-lg border bg-white p-2 flex flex-col gap-5">
+    <div className="rounded-lg border dark b-dark text-gray-400 py-4 px-8 flex flex-col gap-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1">
           <FcOpenedFolder className="text-3xl" />
-          <p className="text-xs">{folder?.name}</p>
+          <p>{folder?.name}</p>
         </div>
         <div className="relative">
           <FiMoreHorizontal onClick={() => setDropdownOpen(!isDropdownOpen)} />
           {isDropdownOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white z-10 border rounded-lg shadow-md">
-              <FolderOptionCard folder={folder} />
+              <FolderOptionCard pageId={pageId} folder={folder} />
             </div>
           )}
         </div>
