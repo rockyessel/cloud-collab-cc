@@ -1,10 +1,10 @@
 import { connectToDB } from "@/lib/config/mongoose";
 import File from "@/lib/model/file.model";
 
-export async function GET({ params }: { params: { id: string, orgName:string } }){
+export async function GET({ params }: { params: { org: string, fileId:string } }){
   connectToDB();
 
-  const foundFile = await File.findOne({ proxyURL: params.id });
+  const foundFile = await File.findOne({ proxyURL: params.fileId });
 
   // verify user here.
 
