@@ -2,7 +2,7 @@ import { connectToDB } from "@/lib/config/mongoose";
 import File from "@/lib/model/file.model";
 
 
-export const GET = async (response: Response, { params }: { params: { id: string } }) => {
+export const GET = async (request: Request, { params }: { params: { id: string } }) => {
   connectToDB();
   const { id } = params;
   try {
