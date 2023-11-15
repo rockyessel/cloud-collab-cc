@@ -19,17 +19,17 @@ const InvitationOrgHandler = async (request: Request) => {
           const { searchParams } = new URL(request.url);
           const orgId = searchParams.get("orgId");
 
-          const listResp = await authn.user.invites.list();
-          console.log(`List success. ${listResp.result.invites} invites sent`);
+          const foundInvitation = await Invitation.find({ orgId });
 
-          const allInvites = listResp.result.invites.filter(
-            (invite) => invite.state === orgId && invite
-          );
-
-          const orgInviteOnly = allInvites;
+          if (!foundInvitation)
+            return Response.json({
+              success: false,
+              data: null,
+              msg: "No invitation found.",
+            });
 
           return Response.json({
-            data: { orgInviteOnly, listResp},
+            data: foundInvitation,
             success: true,
             msg: "Fetched Successfully.",
           });
@@ -62,6 +62,20 @@ const InvitationOrgHandler = async (request: Request) => {
               msg: "Email is needed.",
             });
 
+          // Check if the user has already been invited to the same organization
+          const existingInvitation = await Invitation.findOne({
+            orgId: invite.orgId,
+            email: invite.email,
+          });
+
+          if (existingInvitation) {
+            return Response.json({
+              success: false,
+              data: null,
+              msg: "User has already been invited to this organization.",
+            });
+          }
+
           const sendInvite = await authn.user.invite({
             inviter: "rockyessel76@gmail.com",
             email: invite.email,
@@ -69,10 +83,10 @@ const InvitationOrgHandler = async (request: Request) => {
             state: invite.orgId,
           });
 
-          console.log(sendInvite.result);
-
           // console.log("sendInvite: ", sendInvite.result);
+
           if (sendInvite.result.id) {
+            // Save the invitation record if the invitation is successfully sent
             const insertRecord = await Invitation.create({
               ...invite,
             });
