@@ -23,24 +23,50 @@ export const POST = async (request: Request) => {
   connectToDB();
   try {
     try {
-      const user: {user:UserProps} = await request.json();
-      
-      // Extrct
-      const { email, active_token: { id: memberId }} = user.user;
+      const user: { user: UserProps } = await request.json();
 
+      // Extract needed values
+      const {
+        email,
+        active_token: { id: memberId },
+      } = user.user;
 
-      const listResp = await authn.user.invites.list();
-      console.log(`List success. ${listResp.result.invites} invites sent`);
-      const orgs = listResp.result.invites.filter((org) => org.email === email);
+      // List of invites
+      const inviteLists = await authn.user.invites.list();
+
+      console.log("inviteLists: ", inviteLists.result.invites);
+
+      // Filter invites based on signed-in user to get invite
+      // For that specific user with the Organisation ID as "state"
+      const orgs = inviteLists.result.invites.filter(
+        (org) => org.email === email
+      );
+
       console.log("orgs: ", orgs);
+
+      // Get Invite
       const userInvitation = orgs[0];
+
+      // Pangea Invite has a "state" that stores string,
+      // so Org ID was store the Invite "state".
+      // Get Organisation by ID
       const foundOrg: InitialOrganizationData | null =
-        await Organisation.findById(userInvitation.state);
-      console.log(foundOrg);
-      if (foundOrg && memberId) {
+        await Organisation.findById(userInvitation?.state);
+
+      // Check existence
+
+      if (!foundOrg)
+        return Response.json({
+          success: false,
+          data: null,
+          msg: "Org not found.",
+        });
+
+      if (memberId) {
         const isAMember = foundOrg.members.includes(memberId);
 
         console.log("isAMember: ", isAMember);
+
         if (isAMember) {
           return Response.json({
             success: false,
@@ -53,6 +79,8 @@ export const POST = async (request: Request) => {
             { $push: { members: memberId } },
             { new: true }
           );
+
+          console.log("update: ", updatedOrg);
 
           // Check it exist
           const foundInvitation = await Invitation.findOne({ email });
@@ -77,9 +105,9 @@ export const POST = async (request: Request) => {
         }
       } else {
         return Response.json({
-          success: true,
+          success: false,
           data: null,
-          msg: "Org or Member ID not found.",
+          msg: "Member ID not found.",
         });
       }
     } catch (error) {

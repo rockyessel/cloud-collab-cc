@@ -10,7 +10,7 @@ export const cn = (...inputs: ClassValue[]) => {
 
 export const baseURL = isProduction
   ? process.env.NEXT_PUBLIC_BASEURL
-  : "${baseURL}";
+  : "http://localhost:3000";
 
 export const formatFileSize = (size: number): string => {
   const units = ["B", "KB", "MB", "GB"];

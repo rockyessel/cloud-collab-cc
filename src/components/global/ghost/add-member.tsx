@@ -13,10 +13,8 @@ const AddMemberGhost = () => {
 
   useEffect(() => {
     const addMemberToOrg = async () => {
-      const { data } = await axios.post<ResObj>(
-        `${baseURL}/api/invitation/add`,
-        { user }
-      );
+      const { data } = await axios.post<ResObj>(`${baseURL}/api/invitation/add`,{ user });
+      console.log('data',data)
       if (data.success) {
         toast.success(`You'we added successfully.`);
       } else return;
