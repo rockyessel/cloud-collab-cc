@@ -46,7 +46,14 @@ const Sidebar = ({ orgId }: Props) => {
     >
       <div className="px-4 hover:bg-bttn-rose cursor-pointer flex justify-between pb-[0.20rem] items-center border-b border-[#003143]">
         <NextLink href="/dashboard" className="flex items-center">
-          <NextImage src={organisation?.logo} alt="" width={100} height={100} />
+          {organisation?.logo && (
+            <NextImage
+              src={organisation.logo}
+              alt=""
+              width={100}
+              height={100}
+            />
+          )}
           <p className="inline-flex flex-col my-0 gap-0 text-gray-300 ml-4">
             <span className="font-medium text-xl">{organisation?.name}</span>
             <span className="text-xs">
