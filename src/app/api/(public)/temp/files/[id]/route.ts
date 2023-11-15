@@ -1,15 +1,8 @@
 import { connectToDB } from "@/lib/config/mongoose";
 import File from "@/lib/model/file.model";
 
-interface Props {
-  response: Response;
-  params: { params: { id: string } };
-}
 
-const FileAccessHandler = async (
-  response: Response,
-  { params }: { params: { id: string } }
-) => {
+export const GET = async (response: Response, { params }: { params: { id: string } }) => {
   connectToDB();
   const { id } = params;
   try {
@@ -32,5 +25,3 @@ const FileAccessHandler = async (
     return Response.json({ error });
   }
 };
-
-export { FileAccessHandler as GET };

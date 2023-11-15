@@ -1,16 +1,12 @@
-
 import { connectToDB } from "@/lib/config/mongoose";
 import File from "@/lib/model/file.model";
 
-const FileAccessHandler = async ({ params }: { params: { id: string } }) => {
+export const GET = async ({ params }: { params: { id: string } }) => {
   connectToDB();
 
   const foundFile = await File.findOne({ proxyURL: params.id });
 
   // verify user here.
-  
-
-  
 
   if (foundFile) {
     try {
@@ -34,5 +30,3 @@ const FileAccessHandler = async ({ params }: { params: { id: string } }) => {
     return new Response("File not found", { status: 404 });
   }
 };
-
-export { FileAccessHandler as GET };
