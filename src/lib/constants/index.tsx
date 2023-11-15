@@ -8,6 +8,7 @@ export const initialOrganizationData: InitialOrganizationData = {
   owner: "",
   members: [],
   files: [],
+  website: ""
 };
 
 export const responseObject: ResObj = { msg: "", success: false, data: null };
