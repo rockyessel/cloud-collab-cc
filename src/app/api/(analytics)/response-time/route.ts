@@ -15,7 +15,7 @@ const ResponseTimeHandler = async (request: Request) => {
           };
 
           const foundOrg = await ResponseTime.findOne({
-            organisationId: orgId,
+            organizationId: orgId,
           });
 
           if (foundOrg) {
