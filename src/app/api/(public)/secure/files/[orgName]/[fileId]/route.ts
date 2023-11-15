@@ -1,7 +1,7 @@
 import { connectToDB } from "@/lib/config/mongoose";
 import File from "@/lib/model/file.model";
 
-export const GET = async ({ params }: { params: { id: string } }) => {
+export async function GET({ params }: { params: { id: string, orgName:string } }){
   connectToDB();
 
   const foundFile = await File.findOne({ proxyURL: params.id });
