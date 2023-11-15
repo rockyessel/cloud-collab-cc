@@ -21,7 +21,6 @@
     "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
-    "cookie-cutter": "^0.2.0",
     "crypto-js": "^4.2.0",
     "date-fns": "^2.30.0",
     "fs-extra": "^11.1.1",

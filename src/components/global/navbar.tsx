@@ -1,21 +1,11 @@
 "use client";
 
-import { useAuth } from "@pangeacyber/react-auth";
 import LogoSVG from "../reusables/logo";
 import NextLink from "../reusables/next-link";
-import cookieCutter from "cookie-cutter";
-import { useEffect, useState } from "react";
+import { useAuth } from "@pangeacyber/react-auth";
 
 const Navbar = () => {
   const { login, user, authenticated, getToken, loading } = useAuth();
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    if (loaded) cookieCutter.set("token", getToken());
-    setLoaded(true);
-  }, [getToken, loaded]);
-
-  console.log(user);
   return (
     <header className="bg-slate-900 self-center flex w-full items-start justify-between gap-5 px-5 max-md:max-w-full max-md:flex-wrap">
       <LogoSVG fill={"#f43f5e"} width={100} height={100} />
