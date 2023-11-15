@@ -148,7 +148,7 @@ const FolderHandler = async (request: Request) => {
           });
         }
 
-        const folders = await Folder.find({ organisationId: orgId });
+        const folders = await Folder.find({ organizationId: orgId });
 
         return Response.json({
           msg: "Folder fetched successfully.",

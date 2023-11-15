@@ -61,72 +61,22 @@ const UploadModel = ({ pageId }: Props) => {
         });
         data.append("uploadedBy", currentUser.active_token.id);
         data.append("organizationId", pageId);
-        fetchFile(data);
+        postFiles(data);
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-  const fetchFile = async (formData: FormData): Promise<void> => {
+  const postFiles = async (formData: FormData): Promise<void> => {
     try {
       const response = await fetch(
         "http://localhost:3000/api/files/multiples",
-        {
-          method: "POST",
-          body: formData,
-        }
+        { method: "POST", body: formData }
       );
-      if (!response.body) throw new Error("Response body is undefined");
-      const reader = response.body.getReader();
-      let chunks: string = "";
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        const message: string = new TextDecoder().decode(value);
-        console.log(message);
-        try {
-          const parsedData = JSON.parse(message);
-          if (parsedData.message) {
-            if (parsedData.message === "Error occurred.") {
-              toast.dismiss();
-            }
-
-            // Display the toast
-            toast.promise(
-              new Promise((resolve) => {
-                if (parsedData.success) resolve(parsedData.message);
-              }),
-              {
-                loading: `${parsedData.message}`,
-                success: () => {
-                  return `${
-                    parsedData.message as { message: string | number }
-                  } toast has been added`;
-                },
-                error: "Error",
-              }
-            );
-
-            // If the message contains 'File generated', display a success toast
-            if (
-              parsedData.success &&
-              parsedData.message === "All files processed successfully."
-            ) {
-              toast.success("File(s) uploaded successfully");
-              toast.dismiss();
-            }
-          }
-        } catch (error) {
-          console.error("Error parsing JSON content:", error);
-        }
-        chunks += message;
-        if (chunks.includes("File generated")) {
-          // Reset chunks after 'File generated'
-          chunks = "";
-        }
-      }
+      const data = await response.json();
     } catch (error) {
+      toast.error("Error ");
       console.error("Error fetching data:", error);
     }
   };

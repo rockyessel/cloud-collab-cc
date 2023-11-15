@@ -7,7 +7,7 @@ const FolderSchema = new mongoose.Schema({
     allowedOrganisations: [{ type: mongoose.Schema.Types.ObjectId, ref: "Organisation", default: [] }],
     isAllowed: { type: Boolean, default: false },
     description: { type: String, default: ""},
-    website: String
+    website: String,
 },{ timestamps: true });
 
 const Folder = mongoose.models.Folder || mongoose.model("Folder", FolderSchema);

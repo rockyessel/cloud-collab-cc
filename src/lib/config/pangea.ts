@@ -1,4 +1,4 @@
-const isProduction = process.env.NODE_ENV === "production";
+export const isProduction = process.env.NODE_ENV === "production";
 
 const domain = process.env.PANGEA_DOMAIN || process.env.NEXT_PUBLIC_CLIENT_DOMAIN;
 const token = process.env.PANGEA_INTEL_TOKEN || process.env.NEXT_PUBLIC_CLIENT_TOKEN

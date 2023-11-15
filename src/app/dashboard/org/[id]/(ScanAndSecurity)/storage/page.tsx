@@ -14,8 +14,8 @@ const StoragePage = async ({ params }: { params: { id: string } }) => {
   const data = await response.json();
 
   const responseFolder = await fetch(
-    `http://localhost:3000/api/folder?orgId=${params.id},`,
-    { next: { revalidate: 0 } }
+    `http://localhost:3000/api/folder?orgId=${params.id}`,
+    { next: { revalidate: 0 }}
   );
 
   const dataFolders = await responseFolder.json();

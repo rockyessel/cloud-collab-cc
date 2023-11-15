@@ -7,6 +7,7 @@ const FileSchema = new mongoose.Schema(
     proxyURL: { type: String, require: true },
     uploadedBy: { type: String, default: "" },
     localId: { type: String, default: "" },
+    isScanned: {type: Boolean, default:false},
     hash: { type: String, default: "" },
     score: { type: String, default: "" },
     size: { type: Number, required: true },
@@ -16,13 +17,7 @@ const FileSchema = new mongoose.Schema(
     extension: { type: String, require: true },
     sanityCMSId: { type: String, require: true },
     fileUrl: { type: String, default: "" },
-    allowedOrganisations: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Organisation",
-        default: [],
-      },
-    ],
+    allowedOrganisations: [{type: mongoose.Schema.Types.ObjectId, ref: "Organisation", default: []}],
     isAllowed: { type: Boolean, default: false },
   },
   { timestamps: true }

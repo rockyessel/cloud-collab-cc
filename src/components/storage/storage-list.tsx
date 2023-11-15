@@ -60,7 +60,7 @@ const StorageFilesList = ({ files }: Props) => {
                         {file.isSharable ? <p>Change later</p> : "Just you"}
                       </td>
                       <td className="p-4 whitespace-nowrap font-semibold">
-                        <TableTd />
+                        <TableTd file={file} />
                       </td>
                     </tr>
                   ))}

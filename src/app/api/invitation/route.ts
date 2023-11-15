@@ -1,14 +1,11 @@
-import { connectToDB } from "@/lib/config/mongoose";
-import Session from "@/lib/model/session.model";
-import { PangeaConfig, AuthNService, PangeaErrors } from "pangea-node-sdk";
-import { isSameDay } from "date-fns";
 import { PANGEA_OBJ } from "@/lib/config/pangea";
+import { connectToDB } from "@/lib/config/mongoose";
 import Invitation from "@/lib/model/invitation.model";
+import { PangeaConfig, AuthNService } from "pangea-node-sdk";
 
 const InvitationOrgHandler = async (request: Request) => {
-  const { domain, token } = PANGEA_OBJ;
-  const CB_URI = "http://localhost:3000";
-  const ORG_EMAIL = "orgemaol@gmail.com";
+  const { domain, token, redirectURI } = PANGEA_OBJ;
+  const CB_URI = redirectURI!;
 
   const config = new PangeaConfig({ domain });
   const authn = new AuthNService(token, config);
@@ -30,7 +27,11 @@ const InvitationOrgHandler = async (request: Request) => {
 
           const orgInviteOnly = allInvites;
 
-          return Response.json({ list: orgInviteOnly });
+          return Response.json({
+            data: orgInviteOnly,
+            success: true,
+            msg: "Fetched Successfully.",
+          });
         } catch (error) {
           console.log(error);
         }
@@ -65,8 +66,6 @@ const InvitationOrgHandler = async (request: Request) => {
             email: invite.email,
             callback: CB_URI,
             state: invite.orgId,
-            // @ts-ignore
-            // invite_org: invite.orgId,
           });
 
           console.log("sendInvite: ", sendInvite.result);
@@ -80,8 +79,8 @@ const InvitationOrgHandler = async (request: Request) => {
             if (insertRecord)
               return Response.json({
                 success: true,
-                data: insertRecord,
-                msg: "Sent successfully.I",
+                data: null,
+                msg: "Invite sent successfully.I",
               });
           }
         } catch (error) {

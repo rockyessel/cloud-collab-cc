@@ -1,6 +1,8 @@
 import { twMerge } from "tailwind-merge";
 import { clsx, type ClassValue } from "clsx";
 import { ResObj } from "@/interface";
+import { toast } from "sonner";
+import { isProduction } from "../config/pangea";
 
 export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
@@ -90,3 +92,46 @@ export const handleCreateSession = async (session: any) => {
     console.error("Error creating session:", error);
   }
 };
+
+
+export const downloadFile = async (fileUrl:string, fileName:string) => {
+  try {
+    // Display toast that the download is starting
+    toast.info("File download started...");
+
+    // Fetch the file
+    const response = await fetch(fileUrl);
+
+    // Check if the response is successful (status code in the range 200-299)
+    if (response.ok) {
+      // Convert the response to a Blob
+      const blob = await response.blob();
+
+      // Create a temporary link element
+      const link = document.createElement("a");
+      link.download = fileName;
+      link.href = URL.createObjectURL(blob);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success("File download completed!");
+    } else {
+      toast.error("Error downloading file.");
+    }
+  } catch (error) {
+    console.error("Error downloading file:", error);
+    toast.error("Error downloading file.");
+  }
+};
+
+const baseURL = isProduction ? 'https' : ''
+
+
+export const scanFile = async (filePath:string) => {
+  try {
+    const response = await fetch(``)
+  } catch (error) {
+    console.log(error)
+    toast.error(`Failed to scan. Error:${error}`);
+  }
+}

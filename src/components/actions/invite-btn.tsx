@@ -23,7 +23,7 @@ const InviteBtn = ({ orgId }: Props) => {
   const router = useRouter();
 
   const handleSendInvite = async () => {
-    const loadId = toast.loading("Creating folder.");
+    const loadId = toast.loading("Sending invite...");
     if (orgId && inviteeEmail !== "") {
       const inviteObj = {
         orgId,

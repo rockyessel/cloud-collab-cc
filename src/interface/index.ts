@@ -6,10 +6,10 @@ export interface LayoutProps {
 }
 
 export interface InitialOrganizationData {
-  _id?:string
+  _id?: string;
   logo: string;
   name: string;
-  website:string
+  website: string;
   description: string;
   owner: string;
   members: string[];
@@ -53,9 +53,8 @@ export interface FolderProps {
   allowedOrganisations: string[];
 }
 
-
 export interface FileProps {
-  _id:string;
+  _id: string;
   organizationId: string;
   folderId: string;
   proxyURL: string;
@@ -132,4 +131,16 @@ export interface UserResponse {
     };
     created_at: string;
   };
+}
+
+export interface SessionProps {
+  _id: string;
+  orgId: string;
+  userId: string;
+  name: string;
+  email: string;
+  location: string;
+  loginTime: Date;
+  deviceInfo: string;
+  ipAddress: string;
 }

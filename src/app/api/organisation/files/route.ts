@@ -12,7 +12,9 @@ const OrganisationFileHandler = async (request: Request) => {
         data: null,
         msg: "Org ID is required.",
       });
-    const foundFiles = await File.find({ organisationId: orgId });
+    const foundFiles = await File.find({ organizationId: orgId });
+
+    console.log("Org files: ", foundFiles);
     if (!foundFiles)
       return Response.json({
         success: false,

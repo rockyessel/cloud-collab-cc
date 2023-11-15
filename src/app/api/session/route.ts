@@ -35,9 +35,6 @@ const SessionOrgHandler = async (request: Request) => {
             (session) => !isSameDay(new Date(session.loginTime), today)
           );
 
-          console.log("todaySessions: ", todaySessions);
-          console.log("previousDaysSessions: ", previousDaysSessions);
-
           return Response.json({
             success: true,
             data: {
@@ -46,6 +43,7 @@ const SessionOrgHandler = async (request: Request) => {
             },
           });
         } catch (error) {
+          console.log(error);
           return Response.json({ success: false, error });
         }
 

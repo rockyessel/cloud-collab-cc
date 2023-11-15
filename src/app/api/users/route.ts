@@ -1,75 +1,45 @@
-import { connectToDB } from "@/lib/config/mongoose";
-import User from "@/lib/model/user.model";
+import { PANGEA_OBJ } from "@/lib/config/pangea";
+import { PangeaConfig, AuthNService } from "pangea-node-sdk";
 
-const UserHandler = async (request: Request) => {
-  connectToDB();
+const { token, domain } = PANGEA_OBJ;
+const config = new PangeaConfig({ domain });
+const authn = new AuthNService(token, config);
+
+export const GET = async (request: Request) => {
   try {
-    switch (request.method) {
-      case "GET":
+    const { searchParams } = new URL(request.url);
+    const Id = searchParams.get("Id");
+    const email = searchParams.get("email")!
 
-        try {
-          const users = await User.find({});
-          return Response.json({ success: true, data: users });
-        } catch (error) {
-          return Response.json({ success: false, error });
-        }
+    console.log("User ID: ", Id);
 
-      case "POST":
-        try {
-          const { user } = await request.json();
-          if (!user)
-            return Response.json({
-              success: false,
-              data: {},
-              msg: "Data is undefined.",
-            });
+    // if (!Id)
+    //   return Response.json({
+    //     success: false,
+    //     data: null,
+    //     msg: "ID is required.",
+    //   });
 
-          const created = await User.create({ ...user });
+    const user = await authn.user.profile.getProfile({ email:'rockyessell@gmail.com' });
 
-          if (created) {
-            console.log("User created successfully:", created);
-            return Response.json({ success: true, data: created });
-          } else {
-            return Response.json({
-              success: false,
-              data: {},
-              msg: "Error creating user.",
-            });
-          }
-        } catch (error) {
-          console.log(error);
-          return Response.json({ success: false, data: {}, msg: error });
-        }
-
-      default:
-        return Response.json({ success: false, error: "Method not allowed." });
-    }
+    if (user)
+      return Response.json({
+        data: user,
+        success: true,
+        msg: "Fetched successfully.",
+      });
+    else
+      return Response.json({
+        data: null,
+        success: false,
+        msg: "No user found.",
+      });
   } catch (error) {
-    return Response.json({ success: false, error: "Internal server error" });
-  }
-};
-
-export { UserHandler as GET, UserHandler as POST };
-
-
-const createUserIfNotExists = async (userData) => {
-  const { pangeaId } = userData;
-
-  try {
-    // Check if user with the given pangeaId already exists
-    const existingUser = await User.findOne({ pangeaId });
-
-    if (existingUser) {
-      console.log(`User with pangeaId ${pangeaId} already exists.`);
-      return existingUser; // User already exists, return the existing user
-    }
-
-    // User doesn't exist, create a new user
-    const createdUser = await User.create(userData);
-    console.log(`User with pangeaId ${pangeaId} created successfully.`);
-    return createdUser;
-  } catch (error) {
-    console.error(`Error checking/creating user: ${error}`);
-    throw error; // Handle the error as needed in your application
+    console.log(error);
+    return Response.json({
+      data: null,
+      success: false,
+      msg: "Failed to fetch user.",
+    });
   }
 };
