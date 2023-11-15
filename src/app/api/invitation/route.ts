@@ -2,10 +2,11 @@ import { PANGEA_OBJ } from "@/lib/config/pangea";
 import { connectToDB } from "@/lib/config/mongoose";
 import Invitation from "@/lib/model/invitation.model";
 import { PangeaConfig, AuthNService } from "pangea-node-sdk";
+import { baseURL } from "@/lib/helpers";
 
 const InvitationOrgHandler = async (request: Request) => {
-  const { domain, token, redirectURI } = PANGEA_OBJ;
-  const CB_URI = redirectURI!;
+  const { domain, token } = PANGEA_OBJ;
+  const CB_URI = baseURL!;
 
   const config = new PangeaConfig({ domain });
   const authn = new AuthNService(token, config);
@@ -28,7 +29,7 @@ const InvitationOrgHandler = async (request: Request) => {
           const orgInviteOnly = allInvites;
 
           return Response.json({
-            data: orgInviteOnly,
+            data: { orgInviteOnly, listResp},
             success: true,
             msg: "Fetched Successfully.",
           });
@@ -68,13 +69,15 @@ const InvitationOrgHandler = async (request: Request) => {
             state: invite.orgId,
           });
 
-          console.log("sendInvite: ", sendInvite.result);
+          console.log(sendInvite.result);
+
+          // console.log("sendInvite: ", sendInvite.result);
           if (sendInvite.result.id) {
             const insertRecord = await Invitation.create({
               ...invite,
             });
 
-            console.log("insertRecord: ", insertRecord);
+            // console.log("insertRecord: ", insertRecord);
 
             if (insertRecord)
               return Response.json({

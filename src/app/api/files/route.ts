@@ -78,7 +78,7 @@ async function* processFileHelper(request: Request) {
       data: null,
     });
     await delay(500);
-
+    console.log("fs.existsSync(filePath): ", fs.existsSync(filePath));
     if (fs.existsSync(filePath)) {
       // Reads the file content and then generates the file hash
       const readFileContent = await readFile(filePath);
@@ -97,6 +97,8 @@ async function* processFileHelper(request: Request) {
         verbose: true,
         raw: true,
       });
+
+      console.log("response: ", response.result);
 
       const { score } = response.result.data;
 
@@ -207,9 +209,7 @@ const FileHandler = async (request: Request) => {
       // Query Params
       const { searchParams } = new URL(request.url);
       const orgId = searchParams.get("orgId");
-      const uploadedBy = searchParams.get('uploadedBy')
-
-
+      const uploadedBy = searchParams.get("uploadedBy");
 
       // console.log("Update file: ", file);
       // console.log("orgId: ", orgId);
