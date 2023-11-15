@@ -10,6 +10,7 @@ import UploadFileCard from "./upload-file-card";
 import { useAuth } from "@pangeacyber/react-auth";
 import { toast } from "sonner";
 import DataTraffic from "@/lib/model/dataTraffic.model";
+import { baseURL } from "@/lib/helpers";
 
 interface Props {
   pageId?: string;
@@ -70,10 +71,10 @@ const UploadModel = ({ pageId }: Props) => {
 
   const postFiles = async (formData: FormData): Promise<void> => {
     try {
-      const response = await fetch(
-        "http://localhost:3000/api/files/multiples",
-        { method: "POST", body: formData }
-      );
+      const response = await fetch(`${baseURL}/api/files/multiples`, {
+        method: "POST",
+        body: formData,
+      });
       const data = await response.json();
     } catch (error) {
       toast.error("Error ");

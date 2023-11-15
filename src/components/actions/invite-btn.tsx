@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { FcOpenedFolder } from "react-icons/fc";
 import * as Dialog from "@radix-ui/react-dialog";
+import { baseURL } from "@/lib/helpers";
 
 interface Props {
   orgId: string;
@@ -29,9 +30,7 @@ const InviteBtn = ({ orgId }: Props) => {
         orgId,
         email: inviteeEmail,
       };
-      const { data: data } = await axios.post<ResObj>(
-        "http://localhost:3000/api/invitation",
-        { invite: inviteObj }
+      const { data: data } = await axios.post<ResObj>(`${baseURL}/api/invitation`,{ invite: inviteObj }
       );
       startTransition(() => {
         if (data.success) {

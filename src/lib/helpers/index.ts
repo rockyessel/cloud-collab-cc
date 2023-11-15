@@ -8,6 +8,10 @@ export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
 };
 
+export const baseURL = isProduction
+  ? process.env.NEXT_PUBLIC_BASEURL
+  : "${baseURL}";
+
 export const formatFileSize = (size: number): string => {
   const units = ["B", "KB", "MB", "GB"];
   let formattedSize = size;
@@ -73,7 +77,7 @@ export const getBlurDataURL = async (url: string | null) => {
 
 export const handleCreateSession = async (session: any) => {
   try {
-    const response = await fetch("http://localhost:3000/api/session", {
+    const response = await fetch(`${baseURL}/api/session`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -93,8 +97,7 @@ export const handleCreateSession = async (session: any) => {
   }
 };
 
-
-export const downloadFile = async (fileUrl:string, fileName:string) => {
+export const downloadFile = async (fileUrl: string, fileName: string) => {
   try {
     // Display toast that the download is starting
     toast.info("File download started...");
@@ -124,14 +127,11 @@ export const downloadFile = async (fileUrl:string, fileName:string) => {
   }
 };
 
-const baseURL = isProduction ? 'https' : ''
-
-
-export const scanFile = async (filePath:string) => {
+export const scanFile = async (filePath: string) => {
   try {
-    const response = await fetch(``)
+    const response = await fetch(`${baseURL}/api/`);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     toast.error(`Failed to scan. Error:${error}`);
   }
-}
+};

@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { FcOpenedFolder } from "react-icons/fc";
 import * as Dialog from "@radix-ui/react-dialog";
+import { baseURL } from "@/lib/helpers";
 
 interface Props {
   orgId: string;
@@ -27,14 +28,11 @@ const CreateFolderBtn = ({ orgId }: Props) => {
   const createFolder = async () => {
     const loadId = toast.loading("Creating folder.");
     if (orgId && folderName !== "") {
-      const { data: data } = await axios.post<ResObj>(
-        "http://localhost:3000/api/folder",
-        {
-          orgId,
-          name: folderName,
-          description: folderDescription || "",
-        }
-      );
+      const { data: data } = await axios.post<ResObj>(`${baseURL}/api/folder`, {
+        orgId,
+        name: folderName,
+        description: folderDescription || "",
+      });
       startTransition(() => {
         if (data.success) {
           toast.dismiss(loadId);

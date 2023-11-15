@@ -17,6 +17,7 @@ import {
 import { toast } from "sonner";
 import NextImage from "../reusables/next-image";
 import { FileProps, UserProps } from "@/interface";
+import { baseURL } from "@/lib/helpers";
 
 const OrganisationModal = () => {
   const [isPending, startTransition] = useTransition();
@@ -44,7 +45,7 @@ const OrganisationModal = () => {
   };
 
   const handleSubmission = (event: SyntheticEvent) => {
-     toast.loading('Creating...');
+    toast.loading("Creating...");
     event.preventDefault();
 
     if (!orgFile) {
@@ -55,33 +56,37 @@ const OrganisationModal = () => {
     initialOrganizationData.description = orgForm.description;
     initialOrganizationData.name = orgForm.name;
     initialOrganizationData.owner = currentUser.active_token.id;
-    initialOrganizationData.logo = `http://localhost:3000/api/temp/files/${orgFile?.proxyURL}`;
+    initialOrganizationData.logo = `${baseURL}/api/temp/files/${orgFile?.proxyURL}`;
 
-    if (initialOrganizationData.members.includes(currentUser.active_token.id)) return;
+    if (initialOrganizationData.members.includes(currentUser.active_token.id))
+      return;
     else initialOrganizationData.members.push(`${currentUser.active_token.id}`);
 
     if (!initialOrganizationData.owner) toast.error("User ID not provided.");
     else if (!initialOrganizationData.name) toast.error("Name required.");
     else if (!initialOrganizationData.description) toast.error("Description .");
-    else if (!initialOrganizationData.logo) toast.error("Please upload a logo.");
+    else if (!initialOrganizationData.logo)
+      toast.error("Please upload a logo.");
 
     startTransition(async () => {
-      const { data } = await axios.post(
-        `http://localhost:3000/api/organisation`,
-        { org: initialOrganizationData }
-      );
+      const { data } = await axios.post(`${baseURL}/api/organisation`, {
+        org: initialOrganizationData,
+      });
       router.refresh();
-      if(data.success){
-        toast.success('Created.')
-        const file = {...orgFile }
-       await axios.put(`http://localhost:3000/api/files?orgId=${data.data._id}&uploadedBy=${currentUser.active_token.id}`, {file});
+      if (data.success) {
+        toast.success("Created.");
+        const file = { ...orgFile };
+        await axios.put(
+          `${baseURL}/api/files?orgId=${data.data._id}&uploadedBy=${currentUser.active_token.id}`,
+          { file }
+        );
       }
     });
   };
 
   const fetchFile = async (formData: FormData): Promise<void> => {
     try {
-      const response = await fetch("http://localhost:3000/api/files", {
+      const response = await fetch(`${baseURL}/api/files`, {
         method: "POST",
         body: formData,
       });
@@ -187,7 +192,7 @@ const OrganisationModal = () => {
                       width={200}
                       height={200}
                       alt=""
-                      src={`http://localhost:3000/api/temp/files/${orgFile?.proxyURL}`}
+                      src={`${baseURL}/api/temp/files/${orgFile?.proxyURL}`}
                       className="object-cover object-center w-full h-full"
                     />
                   ) : (

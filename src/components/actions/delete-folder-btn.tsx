@@ -1,6 +1,7 @@
 "use client";
 
 import { ResObj } from "@/interface";
+import { baseURL } from "@/lib/helpers";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
@@ -19,7 +20,7 @@ const DeleteFolderBtn = ({ folderId, pageId }: Props) => {
   const handleDeletion = async (folderId: string) => {
     const loadId = toast.loading("Deleting folder.");
     const { data: d } = await axios.delete<ResObj>(
-      `http://localhost:3000/api/storages/folder?folderId=${folderId}&orgId=${pageId}`
+      `${baseURL}/api/storages/folder?folderId=${folderId}&orgId=${pageId}`
     );
     console.log("deletion: ", d);
     toast.dismiss(loadId);

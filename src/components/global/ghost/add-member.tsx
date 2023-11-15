@@ -1,6 +1,7 @@
 "use client";
 
 import { ResObj } from "@/interface";
+import { baseURL } from "@/lib/helpers";
 import { useAuth } from "@pangeacyber/react-auth";
 import axios from "axios";
 import { Fragment, useEffect, useState } from "react";
@@ -13,7 +14,7 @@ const AddMemberGhost = () => {
   useEffect(() => {
     const addMemberToOrg = async () => {
       const { data } = await axios.post<ResObj>(
-        "http://localhost:3000/api/invitation/add",
+        `${baseURL}/api/invitation/add`,
         { user }
       );
       if (data.success) {

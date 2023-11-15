@@ -2,15 +2,9 @@
 
 import { FileProps, InitialOrganizationData } from "@/interface";
 import { FileEdit, SaveAll } from "lucide-react";
-import {
-  ChangeEvent,
-  Fragment,
-  useEffect,
-  useState,
-  useTransition,
-} from "react";
+import { ChangeEvent, Fragment, useState, useTransition } from "react";
 import NextImage from "../reusables/next-image";
-import { cn } from "@/lib/helpers";
+import { baseURL, cn } from "@/lib/helpers";
 import { toast } from "sonner";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -40,7 +34,7 @@ const OrgSettings = ({ org }: Props) => {
 
   const fetchFile = async (formData: FormData): Promise<void> => {
     try {
-      const response = await fetch("http://localhost:3000/api/files", {
+      const response = await fetch(`${baseURL}/api/files`, {
         method: "POST",
         body: formData,
       });
@@ -117,10 +111,9 @@ const OrgSettings = ({ org }: Props) => {
       return;
     }
     try {
-      const { data } = await axios.put(
-        "http://localhost:3000/api/organisation",
-        { org: orgForm }
-      );
+      const { data } = await axios.put(`${baseURL}/api/organisation`, {
+        org: orgForm,
+      });
       startTransition(() => {
         if (data) toast.success("Organization data updated successfully.");
         router.refresh();

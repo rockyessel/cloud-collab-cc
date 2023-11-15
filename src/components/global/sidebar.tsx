@@ -6,7 +6,7 @@ import NextLink from "../reusables/next-link";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import axios from "axios";
 import { InitialOrganizationData } from "@/interface";
-import { cn } from "@/lib/helpers";
+import { baseURL, cn } from "@/lib/helpers";
 import GhostComponents from "./ghost/ghost-components";
 import AddMemberGhost from "./ghost/add-member";
 
@@ -23,9 +23,7 @@ const Sidebar = ({ orgId }: Props) => {
   useEffect(() => {
     const getUserData = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:3000/api/organisation/${orgId}`
-        );
+        const res = await axios.get(`${baseURL}/api/organisation/${orgId}`);
 
         if (res.status === 200) {
           setOrganisation(res.data.data);

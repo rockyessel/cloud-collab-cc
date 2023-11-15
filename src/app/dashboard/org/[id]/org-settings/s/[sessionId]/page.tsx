@@ -1,5 +1,6 @@
 import Container from "@/components/reusables/container";
 import { SessionProps } from "@/interface";
+import { baseURL } from "@/lib/helpers";
 import { Copy } from "lucide-react";
 
 const UserSessionPage = async ({
@@ -7,10 +8,9 @@ const UserSessionPage = async ({
 }: {
   params: { sessionId: string };
 }) => {
-  const response = await fetch(
-    `http://localhost:3000/api/session/${params.sessionId}`,
-    { next: { revalidate: 0 } }
-  );
+  const response = await fetch(`${baseURL}/api/session/${params.sessionId}`, {
+    next: { revalidate: 0 },
+  });
   const data: { data: SessionProps } = await response.json();
   console.log(data.data);
   return (

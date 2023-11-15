@@ -4,18 +4,19 @@ import Container from "@/components/reusables/container";
 import StorageFilesList from "@/components/storage/storage-list";
 import StorageTypeSection from "@/components/storage/storage-type";
 import { revalidatePath } from "next/cache";
+import { baseURL } from "@/lib/helpers";
 
 const StoragePage = async ({ params }: { params: { id: string } }) => {
   revalidatePath("/");
   const response = await fetch(
-    `http://localhost:3000/api/organisation/files?orgId=${params.id}`,
+    `${baseURL}/api/organisation/files?orgId=${params.id}`,
     { next: { revalidate: 0 } }
   );
   const data = await response.json();
 
   const responseFolder = await fetch(
-    `http://localhost:3000/api/folder?orgId=${params.id}`,
-    { next: { revalidate: 0 }}
+    `${baseURL}/api/folder?orgId=${params.id}`,
+    { next: { revalidate: 0 } }
   );
 
   const dataFolders = await responseFolder.json();

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@pangeacyber/react-auth";
 import OrganisationCard from "../global/organisation-card";
 import { InitialOrganizationData, UserProps } from "@/interface";
+import { baseURL } from "@/lib/helpers";
 
 const OrganisationSection = () => {
   const { user } = useAuth();
@@ -16,7 +17,7 @@ const OrganisationSection = () => {
     const getUserData = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:3000/api/organisation?memberId=${currentUser.active_token.id}`
+          `${baseURL}/api/organisation?memberId=${currentUser.active_token.id}`
         );
 
         if (res.status === 200) {
@@ -36,7 +37,9 @@ const OrganisationSection = () => {
         {loading ? (
           "loading"
         ) : organisations?.length === 0 ? (
-          <i className="font-normal text-gray-200">No Organisation created yet.</i>
+          <i className="font-normal text-gray-200">
+            No Organisation created yet.
+          </i>
         ) : (
           organisations?.map((org, index) => (
             <OrganisationCard key={index} org={org} />

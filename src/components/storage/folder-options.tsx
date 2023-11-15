@@ -5,6 +5,7 @@ import { FcOpenedFolder } from "react-icons/fc";
 import { IoMdArrowDropdown } from "react-icons/io";
 import axios from "axios";
 import DeleteFolderBtn from "../actions/delete-folder-btn";
+import { baseURL } from "@/lib/helpers";
 
 interface Props {
   folder: FolderProps;
@@ -21,7 +22,7 @@ const FolderOptionCard = ({ folder, pageId }: Props) => {
       const {
         data: { data: folders },
       } = await axios.get<ResObj>(
-        `http://localhost:3000/api/storages/folder?orgId=${pageId}`
+        `${baseURL}/api/storages/folder?orgId=${pageId}`
       );
 
       const filteredFolders = folders.filter(
