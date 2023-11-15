@@ -1,12 +1,10 @@
-import { PANGEA_OBJ } from "@/lib/config/pangea";
 import { connectToDB } from "@/lib/config/mongoose";
 import Invitation from "@/lib/model/invitation.model";
 import Organisation from "@/lib/model/organisation.model";
-import { PangeaConfig, AuthNService } from "pangea-node-sdk";
 import { InitialOrganizationData, UserProps } from "@/interface";
 
 // For now, there's no way for us to know if the users has accepted the invite
-// So we need another function to check if a user is invite, so if, then we add the
+// So we need another function to check if a user is invited, so if, then we add the
 // to the org's.
 
 // How we do that is, when the user signup or sign-in, we list all invites, then
@@ -15,11 +13,6 @@ import { InitialOrganizationData, UserProps } from "@/interface";
 // Done.
 
 export const POST = async (request: Request) => {
-  const { domain, token } = PANGEA_OBJ;
-
-  const config = new PangeaConfig({ domain });
-  const authn = new AuthNService(token, config);
-
   connectToDB();
   try {
     try {
@@ -31,29 +24,24 @@ export const POST = async (request: Request) => {
         active_token: { id: memberId },
       } = user.user;
 
-      // List of invites
-      const inviteLists = await authn.user.invites.list();
+      const foundInvitation = await Invitation.findOne({
+        email,
+        state: "pending",
+      });
 
-      console.log("inviteLists: ", inviteLists.result.invites);
+      if (!foundInvitation)
+        return Response.json({
+          success: false,
+          data: null,
+          msg: "No invitation found.",
+        });
+      // console.log("foundInvitation: ", foundInvitation);
 
-      // Filter invites based on signed-in user to get invite
-      // For that specific user with the Organisation ID as "state"
-      const orgs = inviteLists.result.invites.filter(
-        (org) => org.email === email
-      );
-
-      console.log("orgs: ", orgs);
-
-      // Get Invite
-      const userInvitation = orgs[0];
-
-      // Pangea Invite has a "state" that stores string,
-      // so Org ID was store the Invite "state".
-      // Get Organisation by ID
       const foundOrg: InitialOrganizationData | null =
-        await Organisation.findById(userInvitation?.state);
+        await Organisation.findById(foundInvitation.orgId);
 
       // Check existence
+      // console.log("foundOrg: ", foundOrg);
 
       if (!foundOrg)
         return Response.json({
@@ -65,7 +53,7 @@ export const POST = async (request: Request) => {
       if (memberId) {
         const isAMember = foundOrg.members.includes(memberId);
 
-        console.log("isAMember: ", isAMember);
+        // console.log("isAMember: ", isAMember);
 
         if (isAMember) {
           return Response.json({
@@ -80,10 +68,13 @@ export const POST = async (request: Request) => {
             { new: true }
           );
 
-          console.log("update: ", updatedOrg);
+          // console.log("update: ", updatedOrg);
 
           // Check it exist
-          const foundInvitation = await Invitation.findOne({ email });
+          const foundInvitation = await Invitation.findOne({
+            email,
+            state: "pending",
+          });
 
           if (foundInvitation) {
             // Find and update the invitation state to 'accepted'
@@ -93,8 +84,8 @@ export const POST = async (request: Request) => {
               { new: true }
             );
 
-            console.log("updatedOrg: ", updatedOrg);
-            console.log("updatedInviteState: ", updatedInviteState);
+            // console.log("updatedOrg: ", updatedOrg);
+            // console.log("updatedInviteState: ", updatedInviteState);
 
             return Response.json({
               success: true,
@@ -113,7 +104,7 @@ export const POST = async (request: Request) => {
     } catch (error) {
       console.log(error);
       return Response.json({
-        success: true,
+        success: false,
         data: null,
         msg: error,
       });
